@@ -1,18 +1,20 @@
+import '../styles/Input.css';
+
 function Input({input}){
+
+    const inputStyle = {
+        backgroundColor: input.backgroundColor,
+        border: input.border,
+        marginTop: input.marginTop,
+        marginBottom: input.marginBottom
+    }
     return(
         <div>
-            <div className="card">
-                <div className="card-content">
-                <form>
-                    <input className="input is-rounded" 
-                        type={input.type} 
-                        placeHolder={input.placeHolder}
-                        name={input.name}
-                    />
-                </form> 
-                </div>
-            </div>
-            
+            <input className="input is-rounded" style={inputStyle}
+                type={input.type} 
+                placeHolder={input.placeholder}
+                name={input.name}
+            />  
         </div>
     );
 }
