@@ -46,25 +46,9 @@
   text-decoration: underline;
 }
 
-.cardContent-width{
-  width:70%;
-}
-
 .card-itemAlign{
   display: flex;
   justify-content: center;
   text-align: center;
 }
 
-.arrowIcon i{
-  color: black;
-  font-size: 30px;
-
-  /* Syling for the location */
-  position: absolute;
-  right:430px;
-}
-
-.arrowIcon{
-  text-align: left;
-}

@@ -1,9 +1,10 @@
+import '../styles/FormCard.css';
+
 function FormCard(props){
 
     const cardStyle = {
         backgroundColor: props.backgroundColor,
         border: props.border,
-        width: props.width,
         innerCard:{
             backgroundColor: props.backgroundColor
         }
@@ -12,9 +13,9 @@ function FormCard(props){
 
 
     return(
-        <div>
+        <div className="outerCard">
             <div className="card card-itemAlign" style={cardStyle}>
-                <div className="card-content cardContent-width">
+                <div className="card-content cardContent-width-70">
                     <form>
                         {props.children}
                     </form>

@@ -6,15 +6,6 @@
 
 html{
     background-color:#7ed957;
-    overflow-x: none; 
-    overflow-y: none;
-}
-
-.outerCard{
-    display: flex;
-    justify-content: center;
-    text-align: center;
-
-    /* setting margin */
-    margin-top: 200px;
+    overflow-x: hidden; 
+    overflow-y: hidden;
 }

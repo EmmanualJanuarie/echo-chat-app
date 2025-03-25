@@ -5,7 +5,8 @@ function DirectionMsg(props){
         marginLeft: props.marginLeft,
         marginTop: props.marginTop,
         marginBottom: props.marginBottom,
-        color: props.color
+        color: props.color,
+        cursor: props.cursor
     }
 
     const optionMsg = {
@@ -19,7 +20,7 @@ function DirectionMsg(props){
 
     return(
         <div>
-            <span className="text-underline" style={directionMsgStyle}>{message}</span> <span className="anchors" style={optionMsg}>{to}</span>
+            <span className="text-underline" style={directionMsgStyle}>{message}</span> <span className="anchors cursor-pointer" style={optionMsg}>{to}</span>
         </div>
     );
 }
