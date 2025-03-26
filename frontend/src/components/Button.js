@@ -5,7 +5,8 @@ function Button(props){
         fontSize: props.fontSize,
         color: props.color,
         backgroundColor: props.backgroundColor,
-        width: props.width
+        width: props.width,
+        height: props.height
     };
 
     const btnName = props.content;

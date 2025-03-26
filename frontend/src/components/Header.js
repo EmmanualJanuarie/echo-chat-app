@@ -1,23 +1,28 @@
-function Header(props) {
+import '../styles/ChatAppPage.css';
 
+
+function Header(props){
     const headerStyle = {
-        marginTop: props.marginTop,
+        backgroundColor: props.backgroundColor,
+        borderRadius: props.borderRadius,
+        border: props.border,
+        margin: props.margin,
+        padding: props.padding,
         marginBottom: props.marginBottom,
-        fontSize: props.fontSize,
-        color: props.color
-    };
-    const content = props.content;
-
+        borderColor: props.borderColor,
+        boxShadow: props.boxShadow
+    }
     return(
         <div>
-            <h1 style={headerStyle}>
-                {content}
-            </h1>
-            <p className="hz_line">
-                <hr />
-            </p>
+            <header>
+                <div className="card card-width-100" style={headerStyle}>
+                    <div className="card-content">
+                            {props.children}
+                    </div>
+                </div>
+            </header>
         </div>
     );
-};
+}
 
 export default Header;

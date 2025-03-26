@@ -2,7 +2,7 @@ import '../styles/Signin.css';
 import '../styles/FormCard.css'
 import Input from '../components/Input';
 import FormCard from '../components/FormCard';
-import Header from '../components/Header';
+import HeaderText from '../components/HeaderText';
 import Button from '../components/Button';
 import DirectionMsg from '../components/DirectionMsg';
 import ArrowButton from '../components/ArrowButton';
@@ -18,7 +18,7 @@ const Signin = () =>{
                 >
 
                     {/* header component */}
-                <Header content={'Sign In'} fontSize={'40px'} color={'black'} marginBottom={'20px'}/>   
+                <HeaderText content={'Sign In'} fontSize={'40px'} color={'black'} marginBottom={'20px'}/>   
 
                     {/* Input for Email */}
                 <Input backgroundColor={'white'}

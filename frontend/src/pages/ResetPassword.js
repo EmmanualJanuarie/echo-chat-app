@@ -1,6 +1,6 @@
 import Input from '../components/Input';
 import FormCard from '../components/FormCard';
-import Header from '../components/Header';
+import HeaderText from '../components/HeaderText';
 import Button from '../components/Button';
 import ArrowButton from '../components/ArrowButton';
 import '../styles/Signin.css';
@@ -9,7 +9,7 @@ import '../App.css';
 
 function ResetPassword(){
     return(
-        <div className="outerCard">
+        <div>
             <FormCard backgroundColor={'transparent'} border={'2px solid black'} contentWidth={'20%'}
                     innerCard={{
                         backgroundColor:'white'
@@ -20,7 +20,7 @@ function ResetPassword(){
                 <ArrowButton />
 
                     {/* header component */}
-                <Header content={'Reset Password'} fontSize={'40px'} color={'black'} marginBottom={'20px'}/>   
+                <HeaderText content={'Reset Password'} fontSize={'40px'} color={'black'} marginBottom={'20px'}/>   
 
                     {/* Input for Email */}
                 <Input backgroundColor={'white'}
