@@ -1,6 +1,6 @@
 import '../../App.css';
-function VideoCallIcon(props){
-    const VideoCallIconStyle = {
+function VoiceNote(props){
+    const VoiceNoteIconStyle = {
         color: props.color,
         position: props.position,
         textAlign: props.textAlign,
@@ -10,9 +10,9 @@ function VideoCallIcon(props){
     }
     return(
     <div className="icon-hover">
-        <i style={VideoCallIconStyle} className="fa-solid fa-video"></i>
+        <i style={VoiceNoteIconStyle} className="fa-solid fa-microphone"></i>
     </div>
     );
 }
 
-export default VideoCallIcon;
+export default VoiceNote;

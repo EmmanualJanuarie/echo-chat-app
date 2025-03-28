@@ -1,9 +1,11 @@
-function Dot(){
+function Dot(props){
     const circleStyle = {
         backgroundColor: props.backgroundColor,
         borderRadius: props.borderRadius,
         width: props.width,
-        height: props.height
+        height: props.height,
+        position: props.position,
+        left: props.left
     };
     return(
         <div>

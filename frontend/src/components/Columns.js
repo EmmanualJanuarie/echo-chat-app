@@ -5,13 +5,14 @@ function Columns(props){
         justifyCcontent: props.justifyCcontent,
         textAlign: props.textAslign,
         position: props.position,
-        left: props.left
+        left: props.left,
+        right: props.right,
+        margin:props.margin,
+        padding:props.padding
     }
     return(
-        <div>
-            <div className="columns" style={columnStyle}>
-                {props.children}
-            </div>
+        <div className="columns" style={columnStyle}>
+            {props.children}
         </div>
     );
 }

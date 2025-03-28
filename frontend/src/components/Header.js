@@ -10,18 +10,15 @@ function Header(props){
         padding: props.padding,
         marginBottom: props.marginBottom,
         borderColor: props.borderColor,
-        boxShadow: props.boxShadow
+        boxShadow: props.boxShadow,
+        height: props.height
     }
     return(
-        <div>
-            <header>
-                <div className="card card-width-100" style={headerStyle}>
-                    <div className="card-content">
-                            {props.children}
-                    </div>
+            <div className="card card-width-100" style={headerStyle}>
+                <div className="card-content">
+                        {props.children}
                 </div>
-            </header>
-        </div>
+            </div>
     );
 }
 

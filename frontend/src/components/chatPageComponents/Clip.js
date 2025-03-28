@@ -1,6 +1,6 @@
 import '../../App.css';
-function VideoCallIcon(props){
-    const VideoCallIconStyle = {
+function Clip(props){
+    const ClipIconStyle = {
         color: props.color,
         position: props.position,
         textAlign: props.textAlign,
@@ -10,9 +10,9 @@ function VideoCallIcon(props){
     }
     return(
     <div className="icon-hover">
-        <i style={VideoCallIconStyle} className="fa-solid fa-video"></i>
+        <i style={ClipIconStyle} className="fa-solid fa-paperclip"></i>
     </div>
     );
 }
 
-export default VideoCallIcon;
+export default Clip;

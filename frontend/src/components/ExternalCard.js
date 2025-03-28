@@ -5,7 +5,9 @@ function ExternalCard(props){
         backgroundColor: props.backgroundColor,
         border: props.border,
         borderRadius: props.borderRadius,
-        height: props.height
+        height: props.height,
+        position: props.position,
+        bottom: props.bottom
     };
     return(
         <div className='card-justify-center'>

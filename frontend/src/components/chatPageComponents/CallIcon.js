@@ -1,10 +1,16 @@
+import '../../App.css';
 function CallIcon(props){
     const CallIconStyle = {
-        color: props.color
+        color: props.color,
+        position: props.position,
+        textAlign: props.textAlign,
+        left: props.left,
+        bottom:props.bottom,
+        fontSize: props.fontSize
     }
     return(
-    <div>
-        <i style={CallIconStyle} class="fa-solid fa-phone"></i>
+    <div className="icon-hover">
+        <i style={CallIconStyle} className="fa-solid fa-phone"></i>
     </div>
     );
 }

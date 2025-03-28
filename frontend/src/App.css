@@ -52,3 +52,47 @@
   text-align: center;
 }
 
+/* Hover effect for icons */
+.icon-hover:hover{
+  color: black;
+  cursor: pointer;
+}
+.send-icon{
+  cursor: pointer; /* Pointer when hovering */
+  transform: rotate(0deg); /* Initial diagonal rotation */
+  transition: transform 0.5s ease; /* Smooth transition over 0.5 seconds */
+}
+.send-icon:hover{
+  transform: rotate(7deg); /* Rotation to 90 degrees on hover */
+  color: black; /* Icon color */
+}
+
+.user-avatar-hover:hover{
+  background-color: white;
+  cursor: pointer;
+}
+
+.field input::placeholder{
+  color: white;
+}
+
+.field .input-color{
+  color: white;
+}
+
+.reply-input{
+  background-color:#f0f2f7 ;
+  width: 85%;
+  position: absolute;
+  font-size: 20px;
+  border: 0px;
+  border-radius: 0px;
+  bottom: 6px;
+  left: 40px;
+}
+.reply-input:focus{
+  border: 0px;
+  outline: none;
+}
+
+

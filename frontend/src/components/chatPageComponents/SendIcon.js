@@ -1,6 +1,6 @@
 import '../../App.css';
-function VideoCallIcon(props){
-    const VideoCallIconStyle = {
+function SendIcon(props){
+    const SendIconStyle = {
         color: props.color,
         position: props.position,
         textAlign: props.textAlign,
@@ -9,10 +9,10 @@ function VideoCallIcon(props){
         fontSize: props.fontSize
     }
     return(
-    <div className="icon-hover">
-        <i style={VideoCallIconStyle} className="fa-solid fa-video"></i>
+    <div className="send-icon">
+        <i style={SendIconStyle} className="fa-solid fa-paper-plane"></i>
     </div>
     );
 }
 
-export default VideoCallIcon;
+export default SendIcon;

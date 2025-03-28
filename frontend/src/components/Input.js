@@ -6,7 +6,12 @@ function Input({input}){
         backgroundColor: input.backgroundColor,
         border: input.border,
         marginTop: input.marginTop,
-        marginBottom: input.marginBottom
+        marginBottom: input.marginBottom,
+        position: input.position,
+        bottom: input.position,
+        borderRadius: input.borderRadius,
+        boxShadow: input.boxShadow,
+        height: input.height
     }
     return(
         <div>

@@ -1,10 +1,16 @@
+import '../../App.css';
 function ElispsesIcon(props){
     const ElipsesIconStyle = {
-        color: props.color
+        color: props.color,
+        position: props.position,
+        textAlign: props.textAlign,
+        left: props.left,
+        bottom:props.bottom,
+        fontSize: props.fontSize
     }
     return(
-    <div>
-        <i style={ElipsesIconStyle} class="fa-solid fa-ellipsis"></i>
+    <div className="icon-hover">
+        <i style={ElipsesIconStyle} className="fa-solid fa-ellipsis"></i>
     </div>
     );
 }
