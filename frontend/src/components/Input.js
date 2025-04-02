@@ -11,7 +11,8 @@ function Input({input}){
         bottom: input.position,
         borderRadius: input.borderRadius,
         boxShadow: input.boxShadow,
-        height: input.height
+        height: input.height,
+        color: input.color
     }
     return(
         <div>

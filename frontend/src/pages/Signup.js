@@ -8,15 +8,80 @@ import HeaderText from '../components/HeaderText';
 import Button from '../components/Button';
 import DirectionMsg from '../components/DirectionMsg';
 import ArrowButton from '../components/ArrowButton';
+import axios from 'axios';
+import PopUp from '../components/PopUp';
 
 const SignUp = () =>{
-
-   
+    const navigate = useNavigate();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
     const [tel, setTel] = useState();
     const [pic, setPic] = useState();
+
+    const submitHandler = async () =>{
+        if (!tel || !email || !password || !confirmPassword) {
+            <PopUp content={'Please fill in all the fields!'} color={'gray'} backgroundColor={'yellow'}/>
+            return;
+        }else
+
+        if(password != confirmPassword){
+            <PopUp content={'Password does not match!'} color={'gray'} backgroundColor={'yellow'}/>
+            return;
+        }
+        console.log(tel, email, password, pic);
+
+        try {
+            const config = {
+              headers: {
+                "Content-type": "application/json",
+              },
+            };
+            const { data } = await axios.post(
+              "/api/user",
+              {
+                // name,
+                email,
+                password,
+                pic,
+              },
+              config
+            );
+            console.log(data);
+
+            localStorage.setItem("userInfo", JSON.stringify(data));
+            navigate("/userprofile");
+        }catch(error){
+            <PopUp content={'Error Occured'} color={'gray'} backgroundColor={'red'}/>
+        }
+    };
+
+    const postDetails = (pics) => {
+        if(pics===undefined){
+            <PopUp content={'Please select an Image!'} color={'gray'} backgroundColor={'yellow'}/>
+        }
+
+        if(pics.type === "image/jpeg" || pics.type === "image/png"){
+            const data = new FormData();
+        data.append("file", pics);
+        data.append("upload_preset", "echo-chat-app");
+        data.append("cloud_name", "dnxd86qnx");
+        fetch("https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload", {
+            method: "POST",
+            body: data,
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setPic(data.url.toString());
+                console.log(data.url.toString());
+            })
+                .catch((err) => {
+                console.log(err);
+            });
+        } else {
+            <PopUp content={'Please Select an Image!'} color={'gray'} backgroundColor={'yellow'}/>
+        }
+    };
 
     return(
         <div>
@@ -44,7 +109,8 @@ const SignUp = () =>{
                         backgroundColor: 'white', 
                         border: '2px solid black',
                         marginTop: '0px',
-                        marginBottom: '20px'
+                        marginBottom: '20px',
+                        color: 'black'
                     }}
                 />
 
@@ -59,7 +125,8 @@ const SignUp = () =>{
                         backgroundColor: 'white', 
                         border: '2px solid black',
                         marginTop: '0px',
-                        marginBottom: '20px'
+                        marginBottom: '20px',
+                        color: 'black'
                     }}
                 />
 
@@ -75,7 +142,8 @@ const SignUp = () =>{
                         backgroundColor: 'white', 
                         border: '2px solid black',
                         marginTop: '0px',
-                        marginBottom: '20px'
+                        marginBottom: '20px',
+                        color: 'black'
                     }}
                 />
 
@@ -90,11 +158,13 @@ const SignUp = () =>{
                         backgroundColor: 'white', 
                         border: '2px solid black',
                         marginTop: '0px',
-                        marginBottom: '20px'
+                        marginBottom: '20px',
+                        color: 'black'
                     }}
                 />
 
-                <Button type={'submit'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Continue'}/>
+                <Button type={'button'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Continue'}
+                onClick={submitHandler}/>
 
                 <DirectionMsg content={"Have an account?"} toMsg={
                      <Link to="/signin" style={{ textDecoration: 'none', color: 'black' }}>Sign In</Link>

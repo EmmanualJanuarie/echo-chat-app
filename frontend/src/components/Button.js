@@ -12,7 +12,8 @@ function Button(props){
     const btnName = props.content;
     return(
         <div>
-            <button className="button is-rounded" style={buttonStyle} type={props.type} onSubmit={props.onSubmit} isLoad>
+            <button className="button is-rounded" style={buttonStyle} type={props.type} 
+            onClick={props.onClick}>
                 {btnName}
             </button>
         </div>
