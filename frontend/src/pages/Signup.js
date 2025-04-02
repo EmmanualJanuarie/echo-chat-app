@@ -11,168 +11,184 @@ import ArrowButton from '../components/ArrowButton';
 import axios from 'axios';
 import PopUp from '../components/PopUp';
 
-const SignUp = () =>{
+const SignUp = () => {
     const navigate = useNavigate();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [confirmPassword, setConfirmPassword] = useState();
-    const [tel, setTel] = useState();
-    const [pic, setPic] = useState();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [tel, setTel] = useState('');
+    const [pic, setPic] = useState('');
+    const [popUpContent, setPopUpContent] = useState('');
+    const [popUpPosition, setPopUpPosition] = useState('');
+    const [popUpColor, setPopUpColor] = useState('');
+    const [showPopUp, setShowPopUp] = useState(false);
 
-    const submitHandler = async () =>{
+    const showPopUpMessage = (content, color, position) => {
+        setPopUpContent(content);
+        setPopUpColor(color);
+        setPopUpPosition(position);
+        setShowPopUp(true);
+        setTimeout(() => setShowPopUp(false), 4000); // Hide after 3 seconds
+    };
+
+    const submitHandler = async (e) => {
+        e.preventDefault(); // Prevent default form submission
+
         if (!tel || !email || !password || !confirmPassword) {
-            <PopUp content={'Please fill in all the fields!'} color={'gray'} backgroundColor={'yellow'}/>
+            showPopUpMessage('Please fill in all the fields!', 'yellow', 'absolute');
             return;
         }
 
-        if(password !== confirmPassword){
-            <PopUp content={'Password does not match!'} color={'gray'} backgroundColor={'yellow'}/>
+        if (password !== confirmPassword) {
+            showPopUpMessage('Password does not match!', 'yellow', 'absolute');
             return;
         }
+
         console.log(tel, email, password, pic);
 
         try {
             const config = {
-              headers: {
-                "Content-type": "application/json",
-              },
+                headers: {
+                    "Content-type": "application/json",
+                },
             };
             const { data } = await axios.post(
-              "/user",
-              {
-                // name,
-                email,
-                password,
-                pic,
-              },
-              config
+                'http://localhost:5000/api/user', // Update this URL as needed
+                {
+                    flname: 'default name',
+                    email,
+                    password,
+                    tel,
+                    pic: "https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload",
+                    bio: 'Default Bio',
+                },
+                config
             );
             console.log(data);
 
             localStorage.setItem("userInfo", JSON.stringify(data));
             navigate("/userprofile");
-        }catch(error){
-            <PopUp content={'Error Occured'} color={'gray'} backgroundColor={'red'}/>
+        } catch (error) {
+            console.error("Error details:", error.response ? error.response.data : error.message);
+            showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');
         }
     };
 
     const postDetails = (pics) => {
-        if(pics===undefined){
-            <PopUp content={'Please select an Image!'} color={'gray'} backgroundColor={'yellow'}/>
+        if (pics === undefined) {
+            showPopUpMessage('Please select an Image!', 'yellow');
+            return;
         }
 
-        if(pics.type === "image/jpeg" || pics.type === "image/png"){
+        if (pics.type === "image/jpeg" || pics.type === "image/png") {
             const data = new FormData();
-        data.append("file", pics);
-        data.append("upload_preset", "echo-chat-app");
-        data.append("cloud_name", "dnxd86qnx");
-        fetch("https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload", {
-            method: "POST",
-            body: data,
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setPic(data.url.toString());
-                console.log(data.url.toString());
+            data.append("file", pics);
+            data.append("upload_preset", "echo-chat-app");
+            data.append("cloud_name", "dnxd86qnx");
+            fetch("https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload", {
+                method: "POST",
+                body: data,
             })
+                .then((res) => res.json())
+                .then((data) => {
+                    setPic(data.url.toString());
+                    console.log(data.url.toString());
+                })
                 .catch((err) => {
-                console.log(err);
-            });
+                    console.log(err);
+                });
         } else {
-            <PopUp content={'Please Select an Image!'} color={'gray'} backgroundColor={'yellow'}/>
+            showPopUpMessage('Please Select an Image!', 'yellow');
         }
     };
 
-    return(
+    return (
         <div>
+            {showPopUp && <PopUp content={popUpContent} color={'black'} backgroundColor={popUpColor} position={popUpPosition}/>}
             <FormCard backgroundColor={'transparent'} border={'2px solid black'} contentWidth={'20%'}
-                    innerCard={{
-                        backgroundColor:'white'
-                    }}
-                >
+                innerCard={{
+                    backgroundColor: 'white'
+                }}
+            >
 
-                     {/* Adding arrow button */}
-                <ArrowButton linkComp={'/signin'}/>
+                {/* Adding arrow button */}
+                <ArrowButton linkComp={'/signin'} />
 
-
-                    {/* header component */}
-                <HeaderText content={'Sign Up'} fontSize={'40px'} color={'black'} marginBottom={'20px'}/>   
+                {/* header component */}
+                < HeaderText content={'Sign Up'} fontSize={'40px'} color={'black'} marginBottom={'20px'} />
                 <form onSubmit={submitHandler}>
-                    
+
                     {/* Input for Email */}
-                <Input backgroundColor={'white'}
-                    input={{
-                        type: 'email',
-                        placeholder: 'Email',
-                        name: 'email',
-                        onChange: (e) =>setEmail(e.target.value),
-                        value: email,
-                        backgroundColor: 'white', 
-                        border: '2px solid black',
-                        marginTop: '0px',
-                        marginBottom: '20px',
-                        color: 'black'
-                    }}
-                />
+                    <Input backgroundColor={'white'}
+                        input={{
+                            type: 'email',
+                            placeholder: 'Email',
+                            name: 'email',
+                            onChange: (e) => setEmail(e.target.value),
+                            value: email,
+                            backgroundColor: 'white',
+                            border: '2px solid black',
+                            marginTop: '0px',
+                            marginBottom: '20px',
+                            color: 'black'
+                        }}
+                    />
 
-                    {/* input for pwd */}
-                <Input backgroundColor={'white'}
-                    input={{
-                        type: 'password',
-                        placeholder: 'Password',
-                        name: 'password',
-                        onChange: (e) =>setPassword(e.target.value),
-                        value: password,
-                        backgroundColor: 'white', 
-                        border: '2px solid black',
-                        marginTop: '0px',
-                        marginBottom: '20px',
-                        color: 'black'
-                    }}
-                />
+                    {/* Input for Password */}
+                    <Input backgroundColor={'white'}
+                        input={{
+                            type: 'password',
+                            placeholder: 'Password',
+                            name: 'password',
+                            onChange: (e) => setPassword(e.target.value),
+                            value: password,
+                            backgroundColor: 'white',
+                            border: '2px solid black',
+                            marginTop: '0px',
+                            marginBottom: '20px',
+                            color: 'black'
+                        }}
+                    />
 
+                    {/* Input for Confirm Password */}
+                    <Input backgroundColor={'white'}
+                        input={{
+                            type: 'password',
+                            placeholder: 'Confirm Password',
+                            name: 'confirmPassword',
+                            onChange: (e) => setConfirmPassword(e.target.value),
+                            value: confirmPassword,
+                            backgroundColor: 'white',
+                            border: '2px solid black',
+                            marginTop: '0px',
+                            marginBottom: '20px',
+                            color: 'black'
+                        }}
+                    />
 
-                   {/* input for pwd */}
-                   <Input backgroundColor={'white'}
-                    input={{
-                        type: 'password',
-                        placeholder: 'Confirm Password',
-                        name: 'password',
-                        onChange: (e) =>setConfirmPassword(e.target.value),
-                        value: confirmPassword,
-                        backgroundColor: 'white', 
-                        border: '2px solid black',
-                        marginTop: '0px',
-                        marginBottom: '20px',
-                        color: 'black'
-                    }}
-                />
+                    {/* Input for Telephone */}
+                    <Input backgroundColor={'white'}
+                        input={{
+                            type: 'tel',
+                            placeholder: '(+27) XXX - XXX - XXXX',
+                            name: 'tel',
+                            onChange: (e) => setTel(e.target.value),
+                            value: tel,
+                            backgroundColor: 'white',
+                            border: '2px solid black',
+                            marginTop: '0px',
+                            marginBottom: '20px',
+                            color: 'black'
+                        }}
+                    />
 
-                {/* input for tel */}
-                <Input backgroundColor={'white'}
-                    input={{
-                        type: 'tel',
-                        placeholder: '(+27) XXX - XXX - XXXX',
-                        name: 'tel',
-                        onChange: (e) =>setTel(e.target.value),
-                        value: tel,
-                        backgroundColor: 'white', 
-                        border: '2px solid black',
-                        marginTop: '0px',
-                        marginBottom: '20px',
-                        color: 'black'
-                    }}
-                />
-
-                <Button type={'button'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Continue'}
-                onClick={submitHandler}/>
+                    <Button type={'submit'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Continue'} />
                 </form>
 
-
                 <DirectionMsg content={"Have an account?"} toMsg={
-                     <Link to="/signin" style={{ textDecoration: 'none', color: 'black' }}>Sign In</Link>
+                    <Link to="/signin" style={{ textDecoration: 'none', color: 'black' }}>Sign In</Link>
                 } color={'black'}
-                    fontWeight={'bold'}  marginTop={'20px'}
+                    fontWeight={'bold'} marginTop={'20px'}
                 />
             </FormCard>
         </div>

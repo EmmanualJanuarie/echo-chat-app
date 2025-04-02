@@ -18,7 +18,7 @@ function Input({input}){
         <div>
             <input className="input is-rounded" style={inputStyle}
                 type={input.type} 
-                placeHolder={input.placeholder}
+                placeholder={input.placeholder}
                 name={input.name}
                 onChange={input.onChange}
                 value={input.value}

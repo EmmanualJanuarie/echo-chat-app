@@ -3,8 +3,8 @@ import { compare, genSalt, hash } from "bcryptjs";
 
 const userSchema = Schema(
   {
-    name: { type: "String", required: true },
-    email: { type: String, required: true, unique: true },
+    flname: { type: "String", required: true },
+    email: { type: "String", required: true, unique: true },
     password: { type: "String", required: true },
     bio: { type: "String"},
     tel: { type: "Number", required: true },

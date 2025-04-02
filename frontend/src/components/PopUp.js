@@ -6,7 +6,6 @@ function PopUp(props) {
     const popUpStyle = {
         backgroundColor: props.backgroundColor,
         textAlign: props.textAlign,
-        position: props.position,
         top: props.top,
         color: props.color
     }
@@ -34,7 +33,7 @@ function PopUp(props) {
     }, []); // Empty dependency array means this effect runs once on mount and cleanup on unmount
 
     return (
-        <div className='card-justify-center'>
+        <div className='card-justify-center pop-up'>
             <div className="notification width-is-20" style={popUpStyle}>
                 <button className="delete"></button>
                 {props.content}

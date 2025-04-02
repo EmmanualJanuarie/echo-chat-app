@@ -1,6 +1,15 @@
 .App {
   text-align: center;
 }
+.pop-up {
+  position: absolute; /* or fixed, depending on your needs */
+  width:100%;
+  bottom: 700px; /* Adjust as needed */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Centering adjustment */
+  color: white;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
 
 .App-logo {
   height: 40vmin;

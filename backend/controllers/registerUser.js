@@ -4,11 +4,12 @@ import generateToken from '../config/generateToken.js';
 
 // Creating async function for user registration
 const regUser = asyncHandler(async(req, res) =>{
-    const {name, email, password, pic, bio, tel} = req.body;
+    const {flname, email, password, pic, bio, tel} = req.body;
+
+    console.log(req.body);
 
     // Throwing error if any of the  variables are undifiend
-    if(!name || !email || !password || !bio || !tel){
-        res.status(400);
+    if(!flname || !email || !password || !bio || !tel){
         return res.status(400).json({ message: 'Please populate all fields!' });
     }
 
@@ -23,7 +24,7 @@ const regUser = asyncHandler(async(req, res) =>{
 
     // the alternative if user does not exists
     const user = await User.create({
-        name,
+        flname,
         email,
         password,
         bio, 
@@ -34,7 +35,7 @@ const regUser = asyncHandler(async(req, res) =>{
     if(user){
         res.status(201).json({
             _id: user._id,
-            name: user.name,
+            flname: user.flname,
             email: user.email,
             bio: user.bio,
             tel: user.tel,
@@ -44,7 +45,6 @@ const regUser = asyncHandler(async(req, res) =>{
             token: generateToken(user._id),
         });
     }else{
-      res.status(400);
       return res.status(400).json({ message: 'User Creation Failed!' });
     }
 });
@@ -59,7 +59,7 @@ const authUser = asyncHandler(async(req, res) => {
     if(user && (await user.matchPassword(password))){
         res.json({
             _id: user._id,
-            name: user.name,
+            flname: user.flname,
             email: user.email,
             bio: user.bio,
             tel: user.tel,
@@ -69,7 +69,6 @@ const authUser = asyncHandler(async(req, res) => {
             token: generateToken(user._id),
         });
     }else{
-        res.status(401);
         return res.status(401).json({ message: 'Invalid email or password!' });
     }
 });
