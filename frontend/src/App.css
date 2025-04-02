@@ -1,0 +1,97 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Styling and effect for DirectionMsg component */
+.anchors{
+  cursor: pointer;
+}
+
+.anchors:hover{
+  text-decoration: underline;
+}
+
+.card-itemAlign{
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Hover effect for icons */
+.icon-hover:hover{
+  color: black;
+  cursor: pointer;
+}
+.send-icon{
+  cursor: pointer; /* Pointer when hovering */
+  transform: rotate(0deg); /* Initial diagonal rotation */
+  transition: transform 0.5s ease; /* Smooth transition over 0.5 seconds */
+}
+.send-icon:hover{
+  transform: rotate(7deg); /* Rotation to 90 degrees on hover */
+  color: black; /* Icon color */
+}
+
+.user-avatar-hover img:hover{
+  cursor: pointer;
+}
+
+.field input::placeholder{
+  color: white;
+}
+
+.field .input-color{
+  color: white;
+}
+
+.reply-input{
+  background-color:#f0f2f7 ;
+  width: 85%;
+  position: absolute;
+  font-size: 20px;
+  border: 0px;
+  border-radius: 0px;
+  bottom: 6px;
+  left: 40px;
+}
+.reply-input:focus{
+  border: 0px;
+  outline: none;
+}
+
+

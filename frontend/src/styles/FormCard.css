@@ -1,0 +1,72 @@
+.outerCard{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+    /* setting margin */
+    margin-top: 14%;
+}
+
+.arrowIcon i{
+    color: black;
+    font-size: 30px;
+
+    cursor: pointer;
+  
+    /* Syling for the location */
+    position: absolute;
+    left: 18px;
+  }
+  
+  .arrowIcon{
+    text-align: left;
+  }
+
+  /* Modifier class */
+.cardContent-width-70{
+  width: 70%;
+}
+
+.cardContent-width-50{
+    width: 50%;
+}
+
+.cardContent-width-40{
+    width: 40%;
+}
+
+.cardContent-width-30{
+    width: 30%;
+}
+
+.outerCard .card{
+    width:30vw;
+}
+
+/*     ----------------   [MEDIA QURIES FOR COMPONENTS ------------------- */
+@media (max-width:1000px){
+    .outerCard .card{
+        margin-top: 10%;
+        width:50%;
+    }
+
+    
+}
+
+@media (max-width:600px){
+    .outerCard .card{
+        margin-top: 10%;
+        width:50%;
+    }
+}
+
+@media (max-width:500px){
+    .outerCard .card{
+        margin-top: 30%;
+        width:70%;
+    }
+
+    .card-content{
+        width:100%;
+    }
+}
