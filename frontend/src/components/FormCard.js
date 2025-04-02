@@ -16,9 +16,7 @@ function FormCard(props){
         <div className="outerCard">
             <div className="card card-itemAlign" style={cardStyle}>
                 <div className="card-content cardContent-width-70">
-                    <form onSubmit={props.onSubmit}>
                         {props.children}
-                    </form>
                 </div>
             </div>
         </div>

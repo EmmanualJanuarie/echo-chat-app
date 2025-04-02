@@ -23,9 +23,9 @@ const SignUp = () =>{
         if (!tel || !email || !password || !confirmPassword) {
             <PopUp content={'Please fill in all the fields!'} color={'gray'} backgroundColor={'yellow'}/>
             return;
-        }else
+        }
 
-        if(password != confirmPassword){
+        if(password !== confirmPassword){
             <PopUp content={'Password does not match!'} color={'gray'} backgroundColor={'yellow'}/>
             return;
         }
@@ -38,7 +38,7 @@ const SignUp = () =>{
               },
             };
             const { data } = await axios.post(
-              "/api/user",
+              "/user",
               {
                 // name,
                 email,
@@ -97,7 +97,8 @@ const SignUp = () =>{
 
                     {/* header component */}
                 <HeaderText content={'Sign Up'} fontSize={'40px'} color={'black'} marginBottom={'20px'}/>   
-
+                <form onSubmit={submitHandler}>
+                    
                     {/* Input for Email */}
                 <Input backgroundColor={'white'}
                     input={{
@@ -165,6 +166,8 @@ const SignUp = () =>{
 
                 <Button type={'button'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Continue'}
                 onClick={submitHandler}/>
+                </form>
+
 
                 <DirectionMsg content={"Have an account?"} toMsg={
                      <Link to="/signin" style={{ textDecoration: 'none', color: 'black' }}>Sign In</Link>
