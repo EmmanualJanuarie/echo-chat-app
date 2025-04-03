@@ -28,12 +28,13 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 };
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified) {
-    next();
+  if (!this.isModified('password')) { // Corrected this line
+    return next(); // If password is not modified, skip hashing
   }
 
   const salt = await genSalt(10);
   this.password = await hash(this.password, salt);
+  next(); // Call next to proceed with saving the user
 });
 
 const User = model("User", userSchema);

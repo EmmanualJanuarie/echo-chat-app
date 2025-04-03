@@ -59,7 +59,7 @@ const SignUp = () => {
                     email,
                     password,
                     tel,
-                    pic: "https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload",
+                    pic: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
                     bio: 'Default Bio',
                 },
                 config
@@ -67,41 +67,13 @@ const SignUp = () => {
             console.log(data);
 
             localStorage.setItem("userInfo", JSON.stringify(data));
+            localStorage.setItem("userEmail", email);
             navigate("/userprofile");
         } catch (error) {
             console.error("Error details:", error.response ? error.response.data : error.message);
             showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');
         }
     };
-
-    const postDetails = (pics) => {
-        if (pics === undefined) {
-            showPopUpMessage('Please select an Image!', 'yellow');
-            return;
-        }
-
-        if (pics.type === "image/jpeg" || pics.type === "image/png") {
-            const data = new FormData();
-            data.append("file", pics);
-            data.append("upload_preset", "echo-chat-app");
-            data.append("cloud_name", "dnxd86qnx");
-            fetch("https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload", {
-                method: "POST",
-                body: data,
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    setPic(data.url.toString());
-                    console.log(data.url.toString());
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            showPopUpMessage('Please Select an Image!', 'yellow');
-        }
-    };
-
     return (
         <div>
             {showPopUp && <PopUp content={popUpContent} color={'black'} backgroundColor={popUpColor} position={popUpPosition}/>}

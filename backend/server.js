@@ -5,6 +5,7 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import User from "./models/userModel.js";
 
 config();
 
@@ -16,6 +17,7 @@ app.use(cors({
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 app.use(express.json());    
+
 connDB();
 
 app.get("/", (req, res) => {
