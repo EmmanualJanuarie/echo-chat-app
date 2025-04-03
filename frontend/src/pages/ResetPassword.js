@@ -61,6 +61,12 @@ function ResetPassword(){
             
             showPopUpMessage('Password changed', 'green');
             console.log(data);
+
+            // Clears form
+            setEmail('');
+            setPassword('');
+            setRepeatPassword('');
+            
             localStorage.setItem("newPwd", JSON.stringify(data));
             // navigate("/chats");
         } catch (error) {

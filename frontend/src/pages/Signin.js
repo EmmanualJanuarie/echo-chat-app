@@ -57,6 +57,10 @@ const Signin = () => {
 
             localStorage.setItem("userInfo", JSON.stringify(data));
             showPopUpMessage('Sign In request Accepted.', 'green');
+
+            // Clears form
+            setEmail('');
+            setPassword('');
         } catch (error) {
             console.error("Error details:", error.response ? error.response.data : error.message);
             showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');

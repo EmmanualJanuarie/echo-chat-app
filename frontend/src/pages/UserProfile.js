@@ -64,6 +64,10 @@ const UserProfile = () =>{
             
             showPopUpMessage('Profile Created Successful', 'green');
             console.log(data);
+
+            // Clears form
+            setFlname('');
+            setBio('');
             localStorage.setItem("updatedUserInfo", JSON.stringify(data));
             // navigate("/chats");
         } catch (error) {

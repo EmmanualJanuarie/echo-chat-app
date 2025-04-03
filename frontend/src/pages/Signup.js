@@ -66,6 +66,12 @@ const SignUp = () => {
             );
             console.log(data);
 
+            // Clears form
+            setEmail('');
+            setPassword('');
+            setConfirmPassword('');
+            setTel('');
+
             localStorage.setItem("userInfo", JSON.stringify(data));
             localStorage.setItem("userEmail", email);
             navigate("/userprofile");
