@@ -23,11 +23,14 @@ const regUser = asyncHandler(async(req, res) =>{
         return res.status(400).json({ message: 'User Exists!' });
     }
 
+    // Hash the password before saving
+    const hashedPassword = await hash(password, 10);
+
     // the alternative if user does not exists
     const user = await User.create({
         flname,
         email,
-        password,
+        password: hashedPassword,
         bio, 
         tel,
         pic,
@@ -54,35 +57,33 @@ const regUser = asyncHandler(async(req, res) =>{
 // Creating the async function for authentication for user
 const authUser  = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const trimmedPassword = password.trim(); // Trim the password
-
-    console.log("Email:", email); // Log the email
-    console.log("Password:", password); // Log the password
 
     const user = await User.findOne({ email });
 
-    if (user) {
-        console.log("User  found:", user); // Log the user object
-        const isMatch = await user.matchPassword(trimmedPassword);
-        console.log("Password match:", isMatch); // Log the result of password comparison
-
-        if (isMatch) {
-            res.json({
-                _id: user._id,
-                flname: user.flname,
-                email: user.email,
-                bio: user.bio,
-                tel: user.tel,
-                pic: user.pic,
-                token: generateToken(user._id),
-            });
-        } else {
-            console.log("Password does not match");
-            return res.status(401).json({ message: 'Invalid email or password!' });
-        }
-    } else {
+    if (!user) {
         console.log("User  not found");
-        return res.status(401).json({ message: 'Invalid email or password!' });
+        return res.status(401).json({ message: "Invalid email or password!" });
+    }
+
+    console.log("Stored hashed password:", user.password); // Log the stored hashed password
+    console.log("Entered password:", password); // Log the entered password
+
+    const isMatch = await user.matchPassword('$2b$10$QBwNXuCRcdqKEiW8zclowOL.s.VzfB.n.DEntjihY4pEHD3iMutYq');
+    console.log("Password match result:", isMatch); // Log the result of the password comparison
+
+    if (isMatch) {
+        res.json({
+            _id: user._id,
+            flname: user.flname,
+            email: user.email,
+            bio: user.bio,
+            tel: user.tel,
+            pic: user.pic,
+            token: generateToken(user._id),
+        });
+    } else {
+        console.log("Invalid password attempt");
+        return res.status(401).json({ message: "Invalid email or password!" });
     }
 });
 
@@ -145,4 +146,4 @@ const resetPassword = asyncHandler(async (req, res) => {
         pic: resetedUserPwd.pic,
     });
 });
-export default { regUser , authUser, updateUser, resetPassword } ;
+export default { regUser , authUser, updateUser } ;
