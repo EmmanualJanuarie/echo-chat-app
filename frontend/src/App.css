@@ -103,4 +103,15 @@
   outline: none;
 }
 
+.dot-behaviour{
+  background-color: red;
+  width:10px;
+  left: 80%;
+  top:10px;
+}
+
+.chat-section{
+  position: relative;
+  top: 160px;
+}
 

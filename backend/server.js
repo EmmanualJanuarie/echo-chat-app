@@ -4,6 +4,7 @@ import cors from 'cors';
 // import chats from './data/data.js';
 import { config } from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import User from "./models/userModel.js";
 
@@ -12,7 +13,7 @@ config();
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow only this origin
+    origin: 'http://localhost:3000', // Allow only this origin 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
@@ -25,11 +26,12 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/user', userRoutes);
+app.use('/api/chat', chatRoutes);
 
-// ----------------------- Deploymeny Logic ---------------------------------
+// ----------------------- Deployment Logic ---------------------------------
 
 
-// ----------------------- Deploymeny Logic ---------------------------------
+// ----------------------- Deployment Logic ---------------------------------
 
 // Error Handling middlewares
 app.use(notFound);

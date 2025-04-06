@@ -69,7 +69,7 @@ const UserProfile = () =>{
             setFlname('');
             setBio('');
             localStorage.setItem("updatedUserInfo", JSON.stringify(data));
-            // navigate("/chats");
+            navigate("/chat");
         } catch (error) {
             console.error("Error details:", error.response ? error.response.data : error.message);
             showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');

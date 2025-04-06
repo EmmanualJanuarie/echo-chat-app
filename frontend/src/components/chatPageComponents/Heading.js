@@ -5,7 +5,7 @@ function Heading(props){
         fontWeight: props.fontWeight,
         position: props.position,
         bottom: props.bottom,
-        left: props.left
+        left: props.left,
     }
     return(
     <div>

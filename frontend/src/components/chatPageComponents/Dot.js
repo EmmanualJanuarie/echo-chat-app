@@ -9,7 +9,7 @@ function Dot(props){
     };
     return(
         <div>
-        <div style={circleStyle}></div>
+        <div style={circleStyle} className="dot-behaviour"></div>
         </div>
     );
 }

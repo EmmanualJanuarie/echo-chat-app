@@ -55,14 +55,15 @@ const Signin = () => {
             );
             console.log(data);
 
-            localStorage.setItem("userInfo", JSON.stringify(data));
-            showPopUpMessage('Sign In request Accepted.', 'green');
-
             // Clears form
             setEmail('');
             setPassword('');
+
+            localStorage.setItem("userInfo", JSON.stringify(data));
+            showPopUpMessage('Successfully Signed In', 'green');
+            navigate('/chat');
+
         } catch (error) {
-            console.error("Error details:", error.response ? error.response.data : error.message);
             showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');
         }
     };
@@ -78,7 +79,6 @@ return (
                 {/* Header component */}
                 <HeaderText content={'Sign In'} fontSize={'40px'} color={'black'} marginBottom={'20px'} />
 
-                <form onSubmit={submitHandler}>
                     {/* Input for Email */}
                     <Input backgroundColor={'white'}
                         input={{
@@ -100,7 +100,7 @@ return (
                         input={{
                             type: 'password',
                             placeholder: 'Password',
-                            name: 'pwd',
+                            name: 'password',
                             onChange: (e) => setPassword(e.target.value),
                             value: password,
                             backgroundColor: 'white',
@@ -111,8 +111,10 @@ return (
                         }}
                     />
 
-                    <Button type={'submit'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Sign In'} />
-                </form>
+                    <Button type={'submit'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Sign In'} 
+                        onClick={submitHandler}
+                    />
+                
                     <DirectionMsg content={"Don't have an account?"} toMsg={
                         <Link to="/signup" style={{ textDecoration: 'none', color: 'black' }}>Sign Up</Link>
                     } color={'black'}

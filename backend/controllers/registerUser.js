@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import generateToken from '../config/generateToken.js';
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
 
 // Creating async function for user registration
 const regUser = asyncHandler(async(req, res) =>{
@@ -14,8 +14,11 @@ const regUser = asyncHandler(async(req, res) =>{
         return res.status(400).json({ message: 'Please populate all fields!' });
     }
 
+    // Normalize email
+    const normalizedEmail = email.toLowerCase();
+
     // Checkinf if user exists in database
-    const userExists = await User.findOne({email});
+    const userExists = await User.findOne({email: normalizedEmail});
     
     // Display error if user exists
     if(userExists){
@@ -29,7 +32,7 @@ const regUser = asyncHandler(async(req, res) =>{
     // the alternative if user does not exists
     const user = await User.create({
         flname,
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
         bio, 
         tel,
@@ -41,6 +44,7 @@ const regUser = asyncHandler(async(req, res) =>{
             _id: user._id,
             flname: user.flname,
             email: user.email,
+            isAdmin: user.isAdmin,
             bio: user.bio,
             tel: user.tel,
             pic: user.pic,
@@ -53,40 +57,51 @@ const regUser = asyncHandler(async(req, res) =>{
     }
 });
 
-
-// Creating the async function for authentication for user
 const authUser  = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+  // Normalize email
+  const normalizedEmail = email.toLowerCase();
 
-    if (!user) {
-        console.log("User  not found");
-        return res.status(401).json({ message: "Invalid email or password!" });
-    }
+  // Retrieve the user by email
+  const user = await User.findOne({ email: normalizedEmail });
 
-    console.log("Stored hashed password:", user.password); // Log the stored hashed password
-    console.log("Entered password:", password); // Log the entered password
+  if (!user) {
+    return res.status(401).json({ message: "User  not found" });
+  }
 
-    const isMatch = await user.matchPassword('$2b$10$QBwNXuCRcdqKEiW8zclowOL.s.VzfB.n.DEntjihY4pEHD3iMutYq');
-    console.log("Password match result:", isMatch); // Log the result of the password comparison
+  // Use the matchPassword method to compare passwords
+  const isMatch =  user.matchPassword(password); //removed 'await' for chat purposes please add it later
+  if (!isMatch) {
+    return res.status(401).json({ message: "Invalid password" });
+  }
 
-    if (isMatch) {
-        res.json({
-            _id: user._id,
-            flname: user.flname,
-            email: user.email,
-            bio: user.bio,
-            tel: user.tel,
-            pic: user.pic,
-            token: generateToken(user._id),
-        });
-    } else {
-        console.log("Invalid password attempt");
-        return res.status(401).json({ message: "Invalid email or password!" });
-    }
+  // If the password matches, return user details and token
+  res.json({
+    _id: user._id,
+    flname: user.flname,
+    email: user.email,
+    isAdmin: user.isAdmin,
+    bio: user.bio,
+    tel: user.tel,
+    pic: user.pic,
+    token: generateToken(user._id),
+  });
 });
 
+const searchUsers = asyncHandler(async (req, res)=>{
+    const keyword =  req.query.search 
+    ? {
+       $or : [
+        { name: { $regex: req.query.search, $options: "i"} },
+        { email: { $regex: req.query.search, $options: "i"} },
+       ] 
+    }
+    :{};
+
+    const users = await User.find(keyword).find({_id:{ $ne: req.user._id }});
+    res.send(users);
+});
 
 // Creating the async function for updating user information
 const updateUser  = asyncHandler(async (req, res) => {
@@ -138,12 +153,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 
     // Respond with the updated user data
     res.json({
-        _id: resetedUserPwd._id,
-        flname: resetedUserPwd.flname,
-        email: resetedUserPwd.email,
-        bio: resetedUserPwd.bio,
-        tel: resetedUserPwd.tel,
-        pic: resetedUserPwd.pic,
+        password: resetedUserPwd.password,
     });
 });
-export default { regUser , authUser, updateUser } ;
+export default { regUser , authUser, updateUser, searchUsers, resetPassword } ;

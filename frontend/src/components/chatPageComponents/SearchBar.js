@@ -9,7 +9,7 @@ function SearchBar(props){
     return(
         <div className="field">
             <p className="control has-icons-left" style={inputStyle}>
-                <input className="input is-rounded input-color" type="search" placeholder="Search..."/>
+                <input className="input is-rounded input-color" type="search" placeholder="Search..." onChange={props.onChange}/>
                 <span className="icon is-small is-left">
                     <i className="fa-solid fa-magnifying-glass"></i>
                 </span>

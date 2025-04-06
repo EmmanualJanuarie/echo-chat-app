@@ -10,7 +10,7 @@ function CallIcon(props){
     }
     return(
     <div className="icon-hover">
-        <i style={CallIconStyle} className="fa-solid fa-phone"></i>
+        <i style={CallIconStyle} className="fa-solid fa-phone" onClick={props.onClick}></i>
     </div>
     );
 }

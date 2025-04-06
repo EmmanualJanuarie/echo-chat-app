@@ -16,7 +16,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/userprofile" element={<UserProfile />} />
-        <Route path="/chats" element={<ChatAppPage />} />
+        <Route path="/chat" element={<ChatAppPage />} />
         {/* <Route path="/chats" /> */}
       </Routes>
     </div>

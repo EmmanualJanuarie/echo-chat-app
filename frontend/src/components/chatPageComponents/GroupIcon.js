@@ -10,7 +10,7 @@ function GroupIcon(props){
     }
     return(
     <div className="icon-hover">
-        <i style={GroupIconStyle} className="fa-solid fa-user-group"></i>
+        <i style={GroupIconStyle} className="fa-solid fa-user-group" onClick={props.onClick}></i>
     </div>
     );
 }

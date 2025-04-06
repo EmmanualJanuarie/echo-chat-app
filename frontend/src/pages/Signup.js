@@ -72,8 +72,10 @@ const SignUp = () => {
             setConfirmPassword('');
             setTel('');
 
+            const normalizedEmail = email.toLowerCase();
+
             localStorage.setItem("userInfo", JSON.stringify(data));
-            localStorage.setItem("userEmail", email);
+            localStorage.setItem("userEmail", normalizedEmail);
             navigate("/userprofile");
         } catch (error) {
             console.error("Error details:", error.response ? error.response.data : error.message);

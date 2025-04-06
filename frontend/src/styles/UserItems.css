@@ -1,0 +1,9 @@
+.usercards:hover{
+    background-color: black;
+    color: white;
+}
+
+.avatar-size{
+    width: 20%;
+    height:40px;
+}
