@@ -46,8 +46,8 @@ export const isSameSenderMargin = (messages, m, i, userId) => {
     }
 
     // Find the user that is not the logged-in user
-    //return users.find(user => user._id !== loggedUser ._id)?.name || "Unknown User";
-    return users[0]?._id === loggedUser?._id ? users[1].name : users[0].name;
+    return users.find(user => user._id !== loggedUser ._id)?.name || "Unknown User";
+    // return users[0]?._id === loggedUser?._id ? users[1].name : users[0].name;
 };
   
   export const getSenderFull = (loggedUser, users) => {

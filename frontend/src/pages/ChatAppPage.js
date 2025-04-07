@@ -128,21 +128,21 @@ function ChatAppPage(){
     };
 
      // Function to fetch chats
-     const fetchChats = async () => {
-        if (!loggedUser ) return; // Ensure loggedUser  is available
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${loggedUser .token}`,
-                },
-            };
+    //  const fetchChats = async () => {
+    //     if (!loggedUser ) return; // Ensure loggedUser  is available
+    //     try {
+    //         const config = {
+    //             headers: {
+    //                 Authorization: `Bearer ${loggedUser .token}`,
+    //             },
+    //         };
 
-            const { data } = await axios.get("http://localhost:5000/api/chat", config);
-            setChats(data);
-        } catch (error) {
-            showPopUpMessage('Failed to load chats!', 'yellow', 'absolute');
-        }
-    };
+    //         const { data } = await axios.get("http://localhost:5000/api/chat", config);
+    //         setChats(data);
+    //     } catch (error) {
+    //         showPopUpMessage('Failed to load chats!', 'yellow', 'absolute');
+    //     }
+    // };
 
     useEffect(() => { console.log("Fetched chats:", chats); }, [chats]);
 
@@ -152,7 +152,7 @@ function ChatAppPage(){
         if (userInfo) {
             setLoggedUser(userInfo);
         }
-        fetchChats();
+        // fetchChats();
         // eslint-disable-next-line
     }, [fetchAgain]);
 
