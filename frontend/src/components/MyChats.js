@@ -6,7 +6,7 @@ const MyChats = (props) => {
     }
     return(
         <div style={chatStyling}>
-            My chats
+            {props.children}
         </div>
     );
 };

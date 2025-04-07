@@ -14,6 +14,10 @@ const regUser = asyncHandler(async(req, res) =>{
         return res.status(400).json({ message: 'Please populate all fields!' });
     }
 
+    if(email.length() > 20){
+        return res.status(400).json({ message: 'Email is greater than 20 characters' });
+    }
+
     // Normalize email
     const normalizedEmail = email.toLowerCase();
 

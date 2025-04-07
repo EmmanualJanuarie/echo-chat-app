@@ -17,18 +17,24 @@ import { ChatState } from '../Context/ChatProvider.js';
 import SearchSection from "../miscellaneous/SearchSection.js";
 import Card from "../components/chatPageComponents/Card.js";
 import axios from "axios";
+import { useEffect } from "react";
 import MyChats from "../components/MyChats.js";
 import { useState } from "react";
 import ProfileModal from "../components/ProfileModal.js";
 import PopUp from "../components/PopUp.js";
 import { useNavigate } from "react-router-dom";
 import UserItems from "../components/UserContext/UserItems.js";
+import AllUserChats from "../components/UserContext/AllUserChats.js";
 
 function ChatAppPage(){
     const [popUpContent, setPopUpContent] = useState('');
     const [popUpPosition, setPopUpPosition] = useState('');
     const [popUpColor, setPopUpColor] = useState('');
     const [showPopUp, setShowPopUp] = useState(false);
+
+    
+    const [loggedUser, setLoggedUser] = useState();
+    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
     const showPopUpMessage = (content, color, position) => {
         setPopUpContent(content);
@@ -38,12 +44,11 @@ function ChatAppPage(){
         setTimeout(() => setShowPopUp(false), 4000); // Hide after 3 seconds
     };
 
-    const { user } = ChatState();
-
     const [search, setSearch] = useState(''); // State to track search input
     const [searchActive, setSearchActive] = useState(false); // State to track search input
     const [activeCard, setActiveCard] = useState("myChats"); // State to track search input
     const [isModalOpen, setIsModalOpen] = useState(false); // State to track modal visibility
+    const [fetchAgain, setFetchAgain] = useState(false);
 
     const [searchResult, setSearchResult] = useState([]);
     // const [searchLoadingChat, setLoadingChat] = useState([]);
@@ -52,6 +57,8 @@ function ChatAppPage(){
 
     const logoutHandler = () =>{
         localStorage.removeItem("userInfo");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("updatedUserInfo");
         navigate('/');
     }
 
@@ -74,6 +81,7 @@ function ChatAppPage(){
     const handleSearch = async(event) =>{
 
         const searchValue = event.target.value;
+        setSearch(searchValue);
         setSearchActive(searchValue.length > 0); // Set searchActive to true if there's input
 
         try {
@@ -90,9 +98,64 @@ function ChatAppPage(){
         }
     };
 
-    const accessChat = () =>{
+    const accessChat = async(userId) =>{
+        try {
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
 
+            const {data} = await axios.post('http://localhost:5000/api/chat', {userId}, config);
+
+            if (!chats.find((c) => c._id === data._id)) {
+                setSelectedChat([data, ...chats]);
+            }
+            setFetchAgain(prev => !prev); // Trigger fetchChats after accessing chat
+        } catch (error) {
+            showPopUpMessage('Failed to access chat!', 'red');
+        }
     }
+
+    const getOtherUser  = (users, loggedUser ) => {
+        // Check if users is defined and is an array
+        if (!Array.isArray(users)) {
+            console.error("Users is not an array:", users);
+            return null; // or handle this case as needed
+        }
+        return users.find(user => user._id !== loggedUser ._id);
+    };
+
+     // Function to fetch chats
+     const fetchChats = async () => {
+        if (!loggedUser ) return; // Ensure loggedUser  is available
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${loggedUser .token}`,
+                },
+            };
+
+            const { data } = await axios.get("http://localhost:5000/api/chat", config);
+            setChats(data);
+        } catch (error) {
+            showPopUpMessage('Failed to load chats!', 'yellow', 'absolute');
+        }
+    };
+
+    useEffect(() => { console.log("Fetched chats:", chats); }, [chats]);
+
+    // Fetch logged user and chats when component mounts or fetchAgain changes
+    useEffect(() => {
+        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+        if (userInfo) {
+            setLoggedUser(userInfo);
+        }
+        fetchChats();
+        // eslint-disable-next-line
+    }, [fetchAgain]);
+
 
     return(
         <div>
@@ -257,7 +320,33 @@ function ChatAppPage(){
                             ) : (
                                 <div className="card-style">
                                     <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
-                                        <MyChats />
+                                    <MyChats>
+                                            {chats.length > 0 ? (
+                                                chats.map((chat) => (
+                                                    <div key={chat._id} onClick={() => setSelectedChat(chat)}>
+                                                        <AllUserChats 
+                                                            chat={chat}
+                                                            loggedUser ={loggedUser }
+                                                            user={getOtherUser(chat.users, loggedUser )} // Pass the other user
+                                                        />
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p>No chats available</p>
+                                            )}
+
+                                            {/* Render only the selected chat */}
+                                            {selectedChat && (
+                                                <div>
+                                                    <h2>Selected Chat</h2>
+                                                    <AllUserChats 
+                                                        chat={selectedChat}
+                                                        loggedUser ={loggedUser }
+                                                        user={getOtherUser (selectedChat.users, loggedUser )} // Pass the other user
+                                                    />
+                                                </div>
+                                            )}
+                                        </MyChats>
                                     </Card>
                                 </div>
                             )}                            

@@ -39,6 +39,7 @@ const SignUp = () => {
             return;
         }
 
+        
         if (password !== confirmPassword) {
             showPopUpMessage('Password does not match!', 'yellow', 'absolute');
             return;
@@ -46,41 +47,46 @@ const SignUp = () => {
 
         console.log(tel, email, password, pic);
 
-        try {
-            const config = {
-                headers: {
-                    "Content-type": "application/json",
-                },
-            };
-            const { data } = await axios.post(
-                'http://localhost:5000/api/user', // Update this URL as needed
-                {
-                    flname: 'default name',
-                    email,
-                    password,
-                    tel,
-                    pic: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
-                    bio: 'Default Bio',
-                },
-                config
-            );
-            console.log(data);
-
-            // Clears form
-            setEmail('');
-            setPassword('');
-            setConfirmPassword('');
-            setTel('');
-
-            const normalizedEmail = email.toLowerCase();
-
-            localStorage.setItem("userInfo", JSON.stringify(data));
-            localStorage.setItem("userEmail", normalizedEmail);
-            navigate("/userprofile");
-        } catch (error) {
-            console.error("Error details:", error.response ? error.response.data : error.message);
-            showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');
+        if(email.length > 20){
+            showPopUpMessage('Email must be less than 20 Characters!', 'yellow', 'absolute');
+        }else{
+            try {
+                const config = {
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                };
+                const { data } = await axios.post(
+                    'http://localhost:5000/api/user', // Update this URL as needed
+                    {
+                        flname: 'default name',
+                        email,
+                        password,
+                        tel,
+                        pic: "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+                        bio: 'Default Bio',
+                    },
+                    config
+                );
+                console.log(data);
+    
+                // Clears form
+                setEmail('');
+                setPassword('');
+                setConfirmPassword('');
+                setTel('');
+    
+                const normalizedEmail = email.toLowerCase();
+    
+                localStorage.setItem("userInfo", JSON.stringify(data));
+                localStorage.setItem("userEmail", normalizedEmail);
+                navigate("/userprofile");
+            } catch (error) {
+                console.error("Error details:", error.response ? error.response.data : error.message);
+                showPopUpMessage('Error Occurred: ' + (error.response ? error.response.data.message : error.message), 'red');
+            }
         }
+
     };
     return (
         <div>

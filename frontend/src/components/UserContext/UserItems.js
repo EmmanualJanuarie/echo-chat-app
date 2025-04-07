@@ -6,39 +6,42 @@ import Column from "../Column";
 import Heading from "../chatPageComponents/Heading";
 import '../../styles/UserItems.css';
 
-const UserItems = ({user, handleFunction}) =>{
+const UserItems = ({user, handleFunction, props}) =>{
   return (
-    <div className="usercards">
+    <div className="usercards" id="userCards">
         <Card
                 onClick={handleFunction}
                 cursor={"pointer"}
-                backgroundColor={"#E8E8E8"}
+                backgroundColor={"lightGray"}
                 marginBottom={'20px'}
             >
-            <Columns gap={'3%'} position={'relative'}>
+            <Columns  position={'relative'} display={'flex'}>
                 {/* Image */}
                 <Column>
                 <img className="add-cursor avatar-size"
-                src={user.pic} 
-                alt="default-Account-image" 
+                src={`${user.pic}`} 
+                alt="Account-image" 
                 style={{
                     position: 'absolute', // Change to relative or remove
-                    right: '160px',
-                    top: '-8px',
+                    right: '190px',
+                    // top: -8px',
                     objectFit: 'cover',
                     borderRadius: '50%',
                     border: '2px solid black'
                 }}
                 />
                 </Column>
-                <Heading content={user.flname} fontSize={'15px'} color={'gray'} fontWeight={'bold'}
-                    position={'absolute'} textAlign={'left'}  bottom={'12px'} left={'80px'}
-                />
 
-                <Heading content={user.email} fontSize={'14px'} color={'gray'}
-                position={'absolute'} textAlign={'left'}  bottom={'-10px'} left={'80px'}
-                />
-
+                <Column>
+                  <div style={{textAlign: 'right'}}> 
+                  <Heading content={user.flname} fontSize={'15px'} color={'gray'} fontWeight={'bold'}
+                      textAlign={'left'}  
+                  />
+                  <Heading content={user.email} fontSize={'14px'} color={'gray'} fontWeight={'400'}
+                      textAlign={'right'}
+                  />
+                  </div>
+                </Column>
                 </Columns>
         </Card>
     </div>

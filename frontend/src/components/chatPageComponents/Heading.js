@@ -6,6 +6,9 @@ function Heading(props){
         position: props.position,
         bottom: props.bottom,
         left: props.left,
+        wordWrap: props.wordWrap,
+        whiteSpace: props.whiteSpace
+
     }
     return(
     <div>
