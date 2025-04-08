@@ -17,7 +17,6 @@ function App() {
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/userprofile" element={<UserProfile />} />
         <Route path="/chat" element={<ChatAppPage />} />
-        {/* <Route path="/chats" /> */}
       </Routes>
     </div>
   );

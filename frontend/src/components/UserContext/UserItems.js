@@ -6,7 +6,7 @@ import Column from "../Column";
 import Heading from "../chatPageComponents/Heading";
 import '../../styles/UserItems.css';
 
-const UserItems = ({user, handleFunction, props}) =>{
+const UserItems = ({user, handleFunction}) =>{
   return (
     <div className="usercards" id="userCards">
         <Card

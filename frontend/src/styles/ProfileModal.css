@@ -38,3 +38,11 @@
 .button-gap{
     margin-right: 20px;
 }
+
+.group-inputs{
+    position: relative;
+    left: 30px;
+    align-items: center;
+    justify-content: center;
+    width:80%
+}

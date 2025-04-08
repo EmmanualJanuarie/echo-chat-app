@@ -24,17 +24,17 @@ import ProfileModal from "../components/ProfileModal.js";
 import PopUp from "../components/PopUp.js";
 import { useNavigate } from "react-router-dom";
 import UserItems from "../components/UserContext/UserItems.js";
-import AllUserChats from "../components/UserContext/AllUserChats.js";
+import UserChats from "../components/UserContext/UserChats.js";
+import GroupChatModal from "../components/GroupChatModal.js";
 
 function ChatAppPage(){
     const [popUpContent, setPopUpContent] = useState('');
     const [popUpPosition, setPopUpPosition] = useState('');
-    const [popUpColor, setPopUpColor] = useState('');
     const [showPopUp, setShowPopUp] = useState(false);
+    const [popUpColor, setPopUpColor] = useState('');
 
-    
-    const [loggedUser, setLoggedUser] = useState();
-    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+    const { user, chats, setChats } = ChatState();
+   
 
     const showPopUpMessage = (content, color, position) => {
         setPopUpContent(content);
@@ -48,7 +48,7 @@ function ChatAppPage(){
     const [searchActive, setSearchActive] = useState(false); // State to track search input
     const [activeCard, setActiveCard] = useState("myChats"); // State to track search input
     const [isModalOpen, setIsModalOpen] = useState(false); // State to track modal visibility
-    const [fetchAgain, setFetchAgain] = useState(false);
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false); // State to track modal visibility
 
     const [searchResult, setSearchResult] = useState([]);
     // const [searchLoadingChat, setLoadingChat] = useState([]);
@@ -72,8 +72,19 @@ function ChatAppPage(){
         setIsModalOpen(true); // Open the modal
     };
 
+    // Function to handle add Group button 
+    const handleGroupBtnClick = () => {
+        setIsGroupModalOpen(true); // Open the modal
+    };
+
+
     // Function to close the modal
     const closeModal = () => {
+        setIsModalOpen(false); // Close the modal
+    };
+
+    // Function to close the modal
+    const GroupModelClose = () => {
         setIsModalOpen(false); // Close the modal
     };
 
@@ -98,7 +109,14 @@ function ChatAppPage(){
         }
     };
 
-    const accessChat = async(userId) =>{
+    const accessChat = async (userId) => {
+        // Check if user and user.token are defined
+        if (!user || !user.token) {
+            console.error("User  or token is not defined");
+            showPopUpMessage('User  is not authenticated!', 'red');
+            return;
+        }
+    
         try {
             const config = {
                 headers: {
@@ -106,56 +124,25 @@ function ChatAppPage(){
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-
-            const {data} = await axios.post('http://localhost:5000/api/chat', {userId}, config);
-
+    
+            // Make the API call to access or create a chat
+            const { data } = await axios.post('http://localhost:5000/api/chat', { userId }, config);
+    
+            // Check if the chat already exists in the state
             if (!chats.find((c) => c._id === data._id)) {
-                setSelectedChat([data, ...chats]);
+                // Update the chats state with the new chat
+                setChats((prevChats) => [data, ...prevChats]);
+            } else {
+                console.log("Chat already exists in the state");
             }
-            setFetchAgain(prev => !prev); // Trigger fetchChats after accessing chat
+
         } catch (error) {
+            console.error("Error accessing chat:", error); // Log the error for debugging
             showPopUpMessage('Failed to access chat!', 'red');
         }
-    }
-
-    const getOtherUser  = (users, loggedUser ) => {
-        // Check if users is defined and is an array
-        if (!Array.isArray(users)) {
-            console.error("Users is not an array:", users);
-            return null; // or handle this case as needed
-        }
-        return users.find(user => user._id !== loggedUser ._id);
     };
 
-     // Function to fetch chats
-    //  const fetchChats = async () => {
-    //     if (!loggedUser ) return; // Ensure loggedUser  is available
-    //     try {
-    //         const config = {
-    //             headers: {
-    //                 Authorization: `Bearer ${loggedUser .token}`,
-    //             },
-    //         };
-
-    //         const { data } = await axios.get("http://localhost:5000/api/chat", config);
-    //         setChats(data);
-    //     } catch (error) {
-    //         showPopUpMessage('Failed to load chats!', 'yellow', 'absolute');
-    //     }
-    // };
-
-    useEffect(() => { console.log("Fetched chats:", chats); }, [chats]);
-
-    // Fetch logged user and chats when component mounts or fetchAgain changes
-    useEffect(() => {
-        const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-        if (userInfo) {
-            setLoggedUser(userInfo);
-        }
-        // fetchChats();
-        // eslint-disable-next-line
-    }, [fetchAgain]);
-
+    console.log("Chat Object:", chats); // Debugging line
 
     return(
         <div>
@@ -180,7 +167,7 @@ function ChatAppPage(){
                            {/* Account Avatar button */}
                             <Column>
                             <img className="add-cursor header-avatar-size"
-                                src={user.pic} 
+                                src={user?.pic} 
                                 alt="default-Account-image" 
                                 style={{
                                     position: 'absolute', // Change to relative or remove
@@ -208,6 +195,9 @@ function ChatAppPage(){
 
             {/* Render the ProfileModal if isModalOpen is true */}
             {isModalOpen && <ProfileModal onClose={closeModal} />}
+
+            {/* Render the Group Chat Modal if isModalOpen is true */}
+            {isGroupModalOpen && <GroupChatModal onClose={GroupModelClose} />}
 
             <div className="card-width-98">
                     <Columns  margin={'none'} padding={'none'} position={'relative'} left={'15px'}>
@@ -302,55 +292,34 @@ function ChatAppPage(){
 
                             {/* Conditional rendering based on searchActive state */}
                             {searchActive ? (
-                                <div className="card-style">
-                                    <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
-                                        <SearchSection>
+                            <div className="card-style">
+                                <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
+                                    <SearchSection>
                                         <>
-                                            {searchResult?.map(user => (
-                                                <UserItems 
-                                                    key={user._id}
-                                                    user={user}
-                                                    handleFunction={()=>accessChat(user._id)}
-                                                />
-                                            ))}
-                                        </>
-                                        </SearchSection>
-                                    </Card>
-                                </div>
-                            ) : (
-                                <div className="card-style">
-                                    <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
-                                    <MyChats>
-                                            {chats.length > 0 ? (
-                                                chats.map((chat) => (
-                                                    <div key={chat._id} onClick={() => setSelectedChat(chat)}>
-                                                        <AllUserChats 
-                                                            chat={chat}
-                                                            loggedUser ={loggedUser }
-                                                            user={getOtherUser(chat.users, loggedUser )} // Pass the other user
-                                                        />
-                                                    </div>
+                                            {searchResult && searchResult.length > 0 ? (
+                                                searchResult.map(user => (
+                                                    <UserItems 
+                                                        key={user._id}
+                                                        user={user}
+                                                        userId={user._id}
+                                                        handleFunction={() => accessChat(user._id)}
+                                                    />
                                                 ))
                                             ) : (
-                                                <p>No chats available</p>
+                                                <p>No users found</p> // Handle case where no users are found
                                             )}
-
-                                            {/* Render only the selected chat */}
-                                            {selectedChat && (
-                                                <div>
-                                                    <h2>Selected Chat</h2>
-                                                    <AllUserChats 
-                                                        chat={selectedChat}
-                                                        loggedUser ={loggedUser }
-                                                        user={getOtherUser (selectedChat.users, loggedUser )} // Pass the other user
-                                                    />
-                                                </div>
-                                            )}
-                                        </MyChats>
-                                    </Card>
-                                </div>
-                            )}                            
-
+                                        </>
+                                    </SearchSection>
+                                </Card>
+                            </div>
+                        ) : (
+                            <div className="card-style">
+                                <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
+                                    <MyChats backgroundColor={'lightgray'}/>
+                                    {/* <UserChats /> */}
+                                </Card>
+                            </div>
+                        )}
                         </Header>
                         )}
 
@@ -367,10 +336,21 @@ function ChatAppPage(){
 
                         {activeCard === "groupchats" && (
                          <Header backgroundColor={'#f0f2f7'} margin={'none'} padding={'none'} borderRadius={'0px'} height={'70vh'}>
-                            <Heading content={'Group Chats'} fontSize={'30px'} fontWeight={'bold'} color={'black'}
-                            position={'absolute'} textAlign={'left'} left={'30px'}/>
-
+                            <Columns gap={'55%'}>
+                                <Column>
+                                <Heading content={'Group Chats'} fontSize={'30px'} fontWeight={'bold'} color={'black'}
+                                    position={'absolute'} textAlign={'left'} left={'30px'}/>
+                                </Column>
+                                
+                                <Column>
+                                <Button type={'button'} backgroundColor={'black'}  color={'white'} content={'Add Group'}
+                                onClick={handleGroupBtnClick}/>
+                                </Column>
+                            </Columns>
                                     {/* Add Group Chats logic here */}
+                                    <div className="card-style">
+                                    <Card color={'white'} position={'absolute'} backgroundColor={'red'} />
+                                </div>
                         </Header>
                         )}
                     </Column>
