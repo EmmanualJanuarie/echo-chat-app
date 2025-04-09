@@ -27,6 +27,7 @@ import UserItems from "../components/UserContext/UserItems.js";
 import UserChats from "../components/UserContext/UserChats.js";
 import '../styles/selectedUser.css';
 import GroupChatModal from "../components/GroupChatModal.js";
+import { getSender } from "../utils/chatSender.js";
 
 function ChatAppPage(){
     const [popUpContent, setPopUpContent] = useState('');
@@ -34,6 +35,7 @@ function ChatAppPage(){
     const [popUpPosition, setPopUpPosition] = useState('');
     const [showPopUp, setShowPopUp] = useState(false);
     const [popUpColor, setPopUpColor] = useState('');
+    const [loggedUser, setLoggedUser] = useState('');
 
     const { user, chats, setChats } = ChatState();
    
@@ -377,7 +379,19 @@ function ChatAppPage(){
                             </Columns>
                                     {/* Add Group Chats logic here */}
                                     <div className="card-style">
-                                    <Card color={'white'} position={'absolute'} backgroundColor={'red'} />
+                                    <Card color={'white'} position={'absolute'} backgroundColor={'red'}>
+                                    {chats ? (
+                                        <div>
+                                            {chats.map(chat => (
+                                                <Card key={chat._id} color={'white'} position={'absolute'} backgroundColor={'red'}>
+                                                    {!chat.isGroupChat
+                                                        ? getSender(loggedUser , chat.users)
+                                                        : chat.chatName}
+                                                </Card>
+                                            ))}
+                                        </div>
+                                    ) : null}
+                                    </Card>
                                 </div>
                         </Header>
                         )}

@@ -5,6 +5,7 @@ import cors from 'cors';
 import { config } from 'dotenv';
 import userRoutes from './routes/userRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import messageRoutes from './routes/messageRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import User from "./models/userModel.js";
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
+app.use("/api/message", messageRoutes);
 
 // ----------------------- Deployment Logic ---------------------------------
 

@@ -31,12 +31,35 @@ const GroupChatModal = ({ onClose }) => {
         setTimeout(() => setShowPopUp(false), 4000);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        if (!groupChatName || selectedUsers.length === 0) {
+            showPopUpMessage('Please provide a group name and select users!', 'red');
+            return;
+        }
 
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+
+            const { data } = await axios.post('http://localhost:5000/api/chat/group', {
+                name: groupChatName,
+                users: JSON.stringify(selectedUsers.map((u) => u._id)),
+            }, config);
+
+            setChats([data, ...chats]);
+            showPopUpMessage('Group chat created successfully!', 'green');
+            onClose();
+        } catch (error) {
+            console.error("Error creating group chat:", error);
+            showPopUpMessage('Failed to create group chat!', 'red');
+        }
     }
 
     const handleDelete = (user) => {
-
+        setSelectedUsers(selectedUsers.filter((select) => select._id !== user._id));
     }
 
     // function to remove usersCard
@@ -67,41 +90,16 @@ const GroupChatModal = ({ onClose }) => {
         if (selectedUsers.includes(userId)) {
             // User is already selected, so we need to hide them
             setSelectedUsers(prevSelected => prevSelected.filter(user => user !== userId));
-            setHiddenUsers(prevHidden => [...prevHidden, userId]); // Add to hidden users
+            // setHiddenUsers(prevHidden => [...prevHidden, userId]); // Add to hidden users
             showPopUpMessage('User  removed from selection!', 'yellow');
         } else {
             // User is not selected, so we need to show them
             setSelectedUsers(prevSelected => [...prevSelected, userId]);
-            setHiddenUsers(prevHidden => prevHidden.filter(user => user !== userId)); // Remove from hidden users
+            // setHiddenUsers(prevHidden => prevHidden.filter(user => user !== userId)); // Remove from hidden users
         }
+
     };
 
-    const createGroupChat = async () => {
-        if (!groupChatName || selectedUsers.length === 0) {
-            showPopUpMessage('Please provide a group name and select users!', 'red');
-            return;
-        }
-
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            const { data } = await axios.post('http://localhost:5000/api/chat/group', {
-                name: groupChatName,
-                users: JSON.stringify(selectedUsers),
-            }, config);
-
-            setChats([data, ...chats]);
-            showPopUpMessage('Group chat created successfully!', 'green');
-            onClose();
-        } catch (error) {
-            console.error("Error creating group chat:", error);
-            showPopUpMessage('Failed to create group chat!', 'red');
-        }
-    };
 
     return (
         <div className="modal-overlay">
@@ -139,13 +137,13 @@ const GroupChatModal = ({ onClose }) => {
                     />
                     
                     {selectedUsers.map(u => (
-                        <UserBadge key={u._id} user={u} handleFunction={handleDelete(u)}/>
+                        <UserBadge key={u._id} user={u} handleFunction={() => handleDelete(u)}/>
                     ))}
                     
                     <>
                         {searchResult && searchResult.length > 0 ? (
                             searchResult
-                            .filter(user => !hiddenUsers.includes(user._id)) // Filter out hidden users
+                            // .filter(user => !hiddenUsers.includes(user._id)) // Filter out hidden users
                             .slice(0, 4)
                             .map(user => (
                                 <div onClick={() => handleGroup(user._id)} key={user._id} className="chat-card selected-card-style" id="selectedCard">
@@ -162,7 +160,7 @@ const GroupChatModal = ({ onClose }) => {
                     </>
                 </div>
                 <button className="button button-gap" onClick={onClose}>Close</button>
-                <button className="button" style={{ backgroundColor: "#7ed957" }} onClick={createGroupChat}>Create Group</button>
+                <button className="button" style={{ backgroundColor: "#7ed957" }} onClick={handleSubmit}>Create Group</button>
             </div>
         </div>
     );
