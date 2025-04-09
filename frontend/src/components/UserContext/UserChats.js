@@ -11,7 +11,10 @@ import { useEffect } from "react";
 import axios from "axios";
 
 
-const UserChats = ({props, handleFunction, chat, loggedUser}) =>{
+const UserChats = ({ handleFunction }) =>{
+    const [searchResult, setSearchResult] = useState([]);
+    const [searchActive, setSearchActive] = useState(false);
+    
     const [popUpContent, setPopUpContent] = useState('');
     const [popUpPosition, setPopUpPosition] = useState('');
     const [popUpColor, setPopUpColor] = useState('');

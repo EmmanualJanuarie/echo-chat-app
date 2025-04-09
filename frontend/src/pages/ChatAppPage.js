@@ -25,10 +25,12 @@ import PopUp from "../components/PopUp.js";
 import { useNavigate } from "react-router-dom";
 import UserItems from "../components/UserContext/UserItems.js";
 import UserChats from "../components/UserContext/UserChats.js";
+import '../styles/selectedUser.css';
 import GroupChatModal from "../components/GroupChatModal.js";
 
 function ChatAppPage(){
     const [popUpContent, setPopUpContent] = useState('');
+    const [selectedUser, setSelectedUser] = useState(null); // State to track selected user
     const [popUpPosition, setPopUpPosition] = useState('');
     const [showPopUp, setShowPopUp] = useState(false);
     const [popUpColor, setPopUpColor] = useState('');
@@ -59,6 +61,7 @@ function ChatAppPage(){
         localStorage.removeItem("userInfo");
         localStorage.removeItem("userEmail");
         localStorage.removeItem("updatedUserInfo");
+        localStorage.removeItem("selectedUser");
         navigate('/');
     }
 
@@ -77,6 +80,11 @@ function ChatAppPage(){
         setIsGroupModalOpen(true); // Open the modal
     };
 
+    const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
 
     // Function to close the modal
     const closeModal = () => {
@@ -88,61 +96,74 @@ function ChatAppPage(){
         setIsModalOpen(false); // Close the modal
     };
 
-    // function to handle searching users
-    const handleSearch = async(event) =>{
-
-        const searchValue = event.target.value;
-        setSearch(searchValue);
-        setSearchActive(searchValue.length > 0); // Set searchActive to true if there's input
-
-        try {
-            const config = {
-                headers: {
-                    Authorization:`Bearer ${user.token}`,
-                },
-            };
-
-            const { data } = await axios.get(`http://localhost:5000/api/user?search=${search}`, config);
-            setSearchResult(data);
-        } catch (error) {
-            showPopUpMessage('Failed to obtain search results!', 'yellow');
-        }
-    };
-
-    const accessChat = async (userId) => {
-        // Check if user and user.token are defined
-        if (!user || !user.token) {
-            console.error("User  or token is not defined");
-            showPopUpMessage('User  is not authenticated!', 'red');
+    const handleSearch = async (query) => {
+        setSearch(query);
+        if (!query) {
+            setSearchResult([]);
             return;
         }
-    
+
         try {
             const config = {
                 headers: {
-                    "Content-type": "application/json",
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-    
-            // Make the API call to access or create a chat
-            const { data } = await axios.post('http://localhost:5000/api/chat', { userId }, config);
-    
-            // Check if the chat already exists in the state
-            if (!chats.find((c) => c._id === data._id)) {
-                // Update the chats state with the new chat
-                setChats((prevChats) => [data, ...prevChats]);
-            } else {
-                console.log("Chat already exists in the state");
-            }
 
+            const { data } = await axios.get(`http://localhost:5000/api/user?search=${query}`, config);
+            console.log(data);
+            setSearchActive(true); // Set search active to true when searching
+            setSearchResult(data);
         } catch (error) {
-            console.error("Error accessing chat:", error); // Log the error for debugging
-            showPopUpMessage('Failed to access chat!', 'red');
+            console.error("Error fetching search results:", error);
+            showPopUpMessage('Failed to obtain search results!', 'red');
         }
     };
 
+    // Function to handle selected User
+    const handleUserSelect = async (user) => {
+        if (user && user._id) {
+            setSelectedUser(user);
+            localStorage.setItem('selectedUser', JSON.stringify(user)); // Save to localStorage
+            await accessChat(user._id);
+            console.log(user + user._id);
+        } else {
+            showPopUpMessage('Invalid user selected!', 'red');
+        }
+    };
+    const accessChat = async (userId) => {
+        if (!user || !user.token) {
+            showPopUpMessage('User is not authenticated!', 'red');
+          return;
+        }
+    
+        try {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          };
+    
+          const { data } = await axios.post('http://localhost:5000/api/chat', { userId }, config);
+    
+          if (!chats.find((c) => c._id === data._id)) {
+            setChats((prevChats) => [data, ...prevChats]);
+          } else {
+            console.log("Chat already exists in the state");
+          }
+        } catch (error) {
+            showPopUpMessage('Failed to access chat!', 'red');
+        }
+      };
     console.log("Chat Object:", chats); // Debugging line
+
+    useEffect(() => {
+        const storedUser  = localStorage.getItem('selectedUser');
+        if (storedUser ) {
+            setSelectedUser("Stored User: "+JSON.parse(storedUser)); // Set the selected user from localStorage
+        }
+    }, []);
 
     return(
         <div>
@@ -288,38 +309,45 @@ function ChatAppPage(){
                             <Heading content={'Chats'} fontSize={'30px'} fontWeight={'bold'} color={'black'}
                              position={'absolute'} textAlign={'left'} left={'30px'}/>
 
-                            <SearchBar position={'absolute'} top={'90px'} onChange={handleSearch}/>
+                            <SearchBar position={'absolute'} top={'90px'} onChange={(e) => handleSearch(e.target.value)}/>
 
                             {/* Conditional rendering based on searchActive state */}
+                                                    
                             {searchActive ? (
                             <div className="card-style">
                                 <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
                                     <SearchSection>
-                                        <>
-                                            {searchResult && searchResult.length > 0 ? (
-                                                searchResult.map(user => (
-                                                    <UserItems 
-                                                        key={user._id}
-                                                        user={user}
-                                                        userId={user._id}
-                                                        handleFunction={() => accessChat(user._id)}
-                                                    />
-                                                ))
-                                            ) : (
-                                                <p>No users found</p> // Handle case where no users are found
-                                            )}
-                                        </>
+                                        {searchResult.length > 0 ? (
+                                            searchResult.map(user => (
+                                                <UserItems 
+                                                    key={user._id}
+                                                    user={user}
+                                                    handleFunction={() => handleUserSelect(user)}
+                                                />
+                                            ))
+                                        ) : (
+                                            <div>
+                                                {selectedUser  && (
+                                                    <div className="chat-card selected-card-style">
+                                                        <div className="chat-header">
+                                                            <img src={selectedUser.pic} alt="User  Avatar" className="avatar" />
+                                                            <div className="user-info">
+                                                                <h3 className="username"><b>{selectedUser.flname}</b></h3>
+                                                                <p className="timestamp">{formatTime(selectedUser.updatedAt)}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="chat-message">
+                                                            <p>Hello! How are you today?</p>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </SearchSection>
                                 </Card>
                             </div>
-                        ) : (
-                            <div className="card-style">
-                                <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
-                                    <MyChats backgroundColor={'lightgray'}/>
-                                    {/* <UserChats /> */}
-                                </Card>
-                            </div>
-                        )}
+                        ) : null}
+
                         </Header>
                         )}
 

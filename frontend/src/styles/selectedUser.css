@@ -1,0 +1,109 @@
+/* General styles for the chat card */
+.chat-card {
+    background-color: #ffffff; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    margin: 10px; /* Space between cards */
+    padding: 10px; /* Inner padding */
+    transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover effect */
+    max-width: 300px; /* Set a max width for the card */
+    width: 100%; /* Make it responsive */
+    cursor: pointer;
+}
+
+ .chat-card:hover {
+    background-color: #D3D3D3; /* lightgray background */
+ }
+/* Styles for the active chat card */
+.active-chat-card {
+    border-left: 5px solid #007bff; /* Blue left border to indicate active chat */
+    background-color: #e6f0ff; /* Light blue background for active state */
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); /* Enhanced shadow for active state */
+    position: relative; /* Positioning for glow effect */
+}
+
+/* Glow effect */
+.active-chat-card::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 10px; /* Match the card's border radius */
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5); /* Blue glow */
+    z-index: -1; /* Place behind the card */
+}
+
+/* Chat header styles */
+.chat-header {
+    display: flex; /* Flexbox for alignment */
+    align-items: center; /* Center items vertically */
+}
+
+.avatar {
+    width: 35px; /* Smaller avatar size */
+    height: 35px; /* Smaller avatar size */
+    border-radius: 50%; /* Circular avatar */
+    margin-right: 10px; /* Space between avatar and text */
+}
+
+.user-info {
+    flex-grow: 1; /* Allow user info to take available space */
+    text-align: left;
+}
+
+.username {
+    font-size: 1em; /* Adjusted font size for username */
+    margin: 0; /* Remove default margin */
+    color: #333; /* Dark text color */
+}
+
+.timestamp {
+    font-size: 0.8em; /* Smaller font for timestamp */
+    color: #888; /* Gray color for timestamp */
+}
+
+/* Chat message styles */
+.chat-message {
+    margin-top: 5px; /* Space above message */
+    font-size: 0.9em; /* Smaller font size for message */
+    color: #333; /* Dark text color */
+}
+
+/* Hover effect */
+.chat-card:hover {
+    transform: scale(1.02); /* Slightly enlarge on hover */
+}
+#selectedCard{
+    width: 100%;
+}
+#selectedCard img{
+    width: 20%;
+    height: 30%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .chat-card {
+        max-width: 90%; /* Allow more width on smaller screens */
+        padding: 8px; /* Adjust padding */
+    }
+
+    .avatar {
+        width: 30px; /* Smaller avatar size for mobile */
+        height: 30px; /* Smaller avatar size for mobile */
+    }
+
+    .username {
+        font-size: 0.9em; /* Smaller font size for username on mobile */
+    }
+
+    .timestamp {
+        font-size: 0.7em; /* Smaller font size for timestamp on mobile */
+    }
+
+    .chat-message {
+        font-size: 0.8em; /* Smaller font size for message on mobile */
+    }
+}

@@ -12,7 +12,7 @@ const UserItems = ({user, handleFunction}) =>{
         <Card
                 onClick={handleFunction}
                 cursor={"pointer"}
-                backgroundColor={"lightGray"}
+                backgroundColor={"#ffffff"}
                 marginBottom={'20px'}
             >
             <Columns  position={'relative'} display={'flex'}>
@@ -34,10 +34,10 @@ const UserItems = ({user, handleFunction}) =>{
 
                 <Column>
                   <div style={{textAlign: 'right'}}> 
-                  <Heading content={user.flname} fontSize={'15px'} color={'gray'} fontWeight={'bold'}
+                  <Heading content={user.flname || 'Unknown User'} fontSize={'15px'} color={'gray'} fontWeight={'bold'}
                       textAlign={'left'}  
                   />
-                  <Heading content={user.email} fontSize={'14px'} color={'gray'} fontWeight={'400'}
+                  <Heading content={user.email || "no email provided"} fontSize={'14px'} color={'gray'} fontWeight={'400'}
                       textAlign={'right'}
                   />
                   </div>

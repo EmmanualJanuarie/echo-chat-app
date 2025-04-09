@@ -36,7 +36,7 @@ const MyChats = ({props}) => {
             };
 
             const { data } = await axios.get(`http://localhost:5000/api/chat`, config);
-            console.log("what dat looks like: " , data);
+            console.log("what the chat looks like: " , data);
             setChats(data);
         } catch (error) {
             showPopUpMessage('Failed to load chats!', 'yellow');
