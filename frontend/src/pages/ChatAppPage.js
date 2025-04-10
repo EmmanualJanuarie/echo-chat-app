@@ -20,24 +20,38 @@ import axios from "axios";
 import { useEffect } from "react";
 import MyChats from "../components/MyChats.js";
 import { useState } from "react";
-import ProfileModal from "../components/ProfileModal.js";
+import ProfileModal from "../components/modals/ProfileModal.js";
 import PopUp from "../components/PopUp.js";
 import { useNavigate } from "react-router-dom";
 import UserItems from "../components/UserContext/UserItems.js";
 import UserChats from "../components/UserContext/UserChats.js";
 import '../styles/selectedUser.css';
-import GroupChatModal from "../components/GroupChatModal.js";
-import { getSender } from "../utils/chatSender.js";
+import GroupChatModal from "../components/modals/GroupChatModal.js";
+import { getSender , getSenderFull} from "../utils/chatSender.js";
+import UserModal from "../components/modals/UserModal.js";
+import { io } from "socket.io-client";
+import SingleChat from "../components/UserContext/SingleChat.js";
+import '../styles/MessageSection.css';
 
-function ChatAppPage(){
+function ChatAppPage({ fetchAgain, setFetchAgain }){
     const [popUpContent, setPopUpContent] = useState('');
     const [selectedUser, setSelectedUser] = useState(null); // State to track selected user
     const [popUpPosition, setPopUpPosition] = useState('');
     const [showPopUp, setShowPopUp] = useState(false);
     const [popUpColor, setPopUpColor] = useState('');
     const [loggedUser, setLoggedUser] = useState('');
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [socketConnected, setSocketConnected] = useState(false);
+    const [messageContent, setMessageContent] = useState();
+    const [typing, setTyping] = useState(false);
+    const [istyping, setIsTyping] = useState(false);
+    const [selectedChatCompare, setSelectedChatCompare] = useState("");
+    const [socket, setSocket] = useState(" ");
+    const ENDPOINT = "*"; 
 
-    const { user, chats, setChats } = ChatState();
+
+    const { user, chats, setChats, selectedChat, setNotification, notification  } = ChatState();
    
 
     const showPopUpMessage = (content, color, position) => {
@@ -53,6 +67,7 @@ function ChatAppPage(){
     const [activeCard, setActiveCard] = useState("myChats"); // State to track search input
     const [isModalOpen, setIsModalOpen] = useState(false); // State to track modal visibility
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false); // State to track modal visibility
+    const [isUserModalOpen, setIsUserModalOpen] = useState(false); // State to track modal visibility
 
     const [searchResult, setSearchResult] = useState([]);
     // const [searchLoadingChat, setLoadingChat] = useState([]);
@@ -82,6 +97,11 @@ function ChatAppPage(){
         setIsGroupModalOpen(true); // Open the modal
     };
 
+    // Function to handle add Group button 
+    const handleUserClick = () => {
+        setIsUserModalOpen(true); // Open the modal
+    };
+
     const formatTime = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -98,36 +118,17 @@ function ChatAppPage(){
         setIsModalOpen(false); // Close the modal
     };
 
-    const handleSearch = async (query) => {
-        setSearch(query);
-        if (!query) {
-            setSearchResult([]);
-            return;
-        }
-
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            const { data } = await axios.get(`http://localhost:5000/api/user?search=${query}`, config);
-            console.log(data);
-            setSearchActive(true); // Set search active to true when searching
-            setSearchResult(data);
-        } catch (error) {
-            console.error("Error fetching search results:", error);
-            showPopUpMessage('Failed to obtain search results!', 'red');
-        }
+    const UserModelClose = (e) => {
+        setIsModalOpen(false); // Close the modal
+        e.preventDefault();
     };
 
-    // Function to handle selected User
     const handleUserSelect = async (user) => {
         if (user && user._id) {
             setSelectedUser(user);
             localStorage.setItem('selectedUser', JSON.stringify(user)); // Save to localStorage
             await accessChat(user._id);
+            await fetchMessages(user._id); // Fetch messages for the selected chat
             console.log(user + user._id);
         } else {
             showPopUpMessage('Invalid user selected!', 'red');
@@ -158,14 +159,151 @@ function ChatAppPage(){
             showPopUpMessage('Failed to access chat!', 'red');
         }
       };
-    console.log("Chat Object:", chats); // Debugging line
+
+    const handleSearch = async (query) => {
+        setSearch(query);
+        if (!query) {
+            setSearchResult([]);
+            return;
+        }
+
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+
+            const { data } = await axios.get(`http://localhost:5000/api/user?search=${query}`, config);
+            console.log(data);
+            setSearchActive(true); // Set search active to true when searching
+            setSearchResult(data);
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+            showPopUpMessage('Failed to obtain search results!', 'red');
+        }
+    };
+
+    const sendMessage = async (event) => {
+        if (event.key === "Enter" && newMessage) {
+            event.preventDefault();
+            socket.emit("stop typing", selectedChat._id);
+            try {
+                const config = {
+                    headers: {
+                        "Content-type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+                const { data } = await axios.post("/api/message", {
+                    content: newMessage,
+                    chatId: selectedChat._id,
+                }, config);
+                console.log("send data log", data);
+                socket.emit("new message", data);
+                setMessages((prevMessages) => [...prevMessages, data]);
+                setNewMessage(""); // Clear the input after sending
+            } catch (error) {
+                showPopUpMessage('Failed to send the Message!', 'yellow');
+            }
+        }
+    };
+
+
+     //logic for obtaining the message
+     const fetchMessages = async () => {
+        if (!selectedChat) return;
+    
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+    
+            const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
+            console.log("fetch data log", data);
+            
+            setMessages(data);
+            socket.emit("join chat", selectedChat._id);
+        } catch (error) {
+            showPopUpMessage('Failed to load messages!', 'red');
+        }
+    };
+    
+
+    const handleSendMessage = async (event) => {
+        if (event.key === "Enter" && newMessage) {
+            event.preventDefault(); // Prevent the default action (like a form submission)
+            await sendMessage(event); // Call the sendMessage function
+        }
+    };
+    
+    useEffect(() => {
+        // Initialize socket connection
+        const newSocket = io(ENDPOINT, {
+            transports: ['websocket', 'polling'],
+        });
+
+        // Handle connection errors
+        newSocket.on("connect_error", (err) => {
+            console.error("Socket connection error:", err);
+        });
+
+        setSocket(newSocket);
+
+        // Emit setup event
+        newSocket.emit("setup", user);
+
+        // Socket event listeners
+        newSocket.on("connected", () => setSocketConnected(true));
+        newSocket.on("typing", () => setIsTyping(true));
+        newSocket.on("stop typing", () => setIsTyping(false));
+
+        // Listen for incoming messages
+        newSocket.on("message received", (newMessageReceived) => {
+            if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
+                // Handle notification logic here
+            } else {
+                setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
+            }
+        });
+
+        // Cleanup function to disconnect the socket
+        return () => {
+            if (newSocket) {
+                newSocket.disconnect();
+            }
+        };
+    }, [user]); // Only re-run the effect if user changes
 
     useEffect(() => {
-        const storedUser  = localStorage.getItem('selectedUser');
-        if (storedUser ) {
-            setSelectedUser("Stored User: "+JSON.parse(storedUser)); // Set the selected user from localStorage
+        // Fetch messages when selectedChat changes
+        fetchMessages();
+        setSelectedChatCompare(selectedChat); // Update the selected chat comparison
+    }, [selectedChat]); // Only re-run the effect if selectedChat changes
+
+
+const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+
+    if (!socketConnected) return;
+
+    if (!typing) {
+        setTyping(true);
+        socket.emit("typing", selectedChat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+        var timeNow = new Date().getTime();
+        var timeDiff = timeNow - lastTypingTime;
+        if (timeDiff >= timerLength && typing) {
+            socket.emit("stop typing", selectedChat._id);
+            setTyping(false);
         }
-    }, []);
+    }, timerLength);
+};
 
     return(
         <div>
@@ -222,6 +360,9 @@ function ChatAppPage(){
             {/* Render the Group Chat Modal if isModalOpen is true */}
             {isGroupModalOpen && <GroupChatModal onClose={GroupModelClose} />}
 
+            {/* Render the User Chat Modal if isModalOpen is true */}
+            {isUserModalOpen && <UserModal onClose={UserModelClose} selectedUser={selectedUser} />}
+
             <div className="card-width-98">
                     <Columns  margin={'none'} padding={'none'} position={'relative'} left={'15px'}>
                         {/* First Column */}
@@ -262,10 +403,10 @@ function ChatAppPage(){
 
                                             {/* Second Column */}
                                             <Column>
-                                                <Heading content={'John Doe'} fontSize={'20px'} fontWeight={'bold'} color={'black'}
-                                                    position={'absolute'} textAlign={'left'}  bottom={'5px'} left={'80px'}
-                                                />
-                                                <Heading content={'Last seen 3 hours ago'} fontSize={'15px'} color={'gray'}
+                                            <Heading content={selectedUser  ? selectedUser.flname : null} fontSize={'20px'} fontWeight={'bold'} color={'black'}
+                                                position={'absolute'} textAlign={'left'}  bottom={'5px'} left={'80px'}
+                                            />
+                                                <Heading content={selectedUser  ? `Last seen at ${formatTime(selectedUser.updatedAt)}` : null} fontSize={'15px'} color={'gray'}
                                                     position={'absolute'} textAlign={'left'}  bottom={'-10px'} left={'80px'}
                                                 />
                                             </Column>
@@ -280,7 +421,8 @@ function ChatAppPage(){
 
                                             {/* Second Column */}
                                             <Column>
-                                                <ElispsesIcon position={'absolute'} textAlign={'left'} bottom={'-3px'} fontSize={'30px'} />
+                                                <ElispsesIcon position={'absolute'} textAlign={'left'} bottom={'-3px'} fontSize={'30px'} 
+                                                onClick={handleUserClick} />
                                             </Column>
                                         </Columns>
                                     </Columns>
@@ -402,13 +544,29 @@ function ChatAppPage(){
                         {/* Second Column */}
                         <div className="width-is-70">
                             <Column>
-                                <Header backgroundColor={'white'} margin={'none'} padding={'none'} borderRadius={'0px'} height={'62vh'}>
-                                    {/* chatting here */}
-                                </Header>
+                            <Header backgroundColor={'white'} margin={'none'} padding={'none'} borderRadius={'0px'} height={'62vh'}>
+                                {/* Render Messages */}
+                                <div className="messages-container">
+                                    <div className="messages">
+                                        {messages.map((msg) => (
+                                            <div key={msg._id} className={`message ${msg.sender._id === user._id ? 'sent' : 'received'}`}>
+                                                <p>{msg.content}</p>
+                                                <span className="timestamp">{formatTime(msg.createdAt)}</span> {/* Optional: Display timestamp */}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <Card/>
+                            </Header>
 
                                 <Header backgroundColor={'white'} margin={'none'} padding={'none'} borderRadius={'0px'}>
                                     {/* send reply */}
-                                    <SendBar />
+                                    <SendBar 
+                                        value={newMessage}
+                                        onChange={typingHandler} 
+                                        // onSubmit={sendMessage}
+                                        onKeyDown={handleSendMessage} // Pass the sendMessage function
+                                    />
                                 </Header>
                             </Column>
                         </div>

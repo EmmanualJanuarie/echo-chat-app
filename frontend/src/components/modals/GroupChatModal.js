@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import '../styles/ProfileModal.css';
-import '../styles/selectedUser.css';
-import { ChatState } from "../Context/ChatProvider";
-import Card from "./chatPageComponents/Card";
-import Avatar from "./chatPageComponents/Avatar";
-import PopUp from "./PopUp";
-import Input from "./Input";
+import '../../styles/ProfileModal.css';
+import '../../styles/selectedUser.css';
+import { ChatState } from "../../Context/ChatProvider";
+import Card from "../chatPageComponents/Card";
+import Avatar from "../chatPageComponents/Avatar";
+import PopUp from "../PopUp";
+import Input from "../Input";
 import axios from "axios";
-import UserItems from "./UserContext/UserItems";
-import UserBadge from "./UserContext/UserBadge";
+import UserItems from "../UserContext/UserItems";
+import UserBadge from "../UserContext/UserBadge";
 
 const GroupChatModal = ({ onClose }) => {
     const [popUpContent, setPopUpContent] = useState('');

@@ -1,16 +1,16 @@
 import React from "react";
-import '../styles/ProfileModal.css';
-import { ChatState } from "../Context/ChatProvider";
-import Card from "./chatPageComponents/Card";
-import Avatar from "./chatPageComponents/Avatar";
+import '../../styles/ProfileModal.css';
+import { ChatState } from "../../Context/ChatProvider";
+import Card from "../../components/chatPageComponents/Card";
+import Avatar from "../../components/chatPageComponents/Avatar";
 
-const ProfileModal = ({ onClose }) =>{
+const UserModal = ({ onClose, selectedUser }) =>{
     const { user } = ChatState();
     return(
         <div className="modal-overlay">
         <div className="modal-content">
             <img
-                src={user.pic} 
+                src={selectedUser.pic} 
                 alt="default-Account-image" 
                 style={{
                     objectFit: 'cover',
@@ -22,14 +22,13 @@ const ProfileModal = ({ onClose }) =>{
            <div  style={{textAlign: 'left'}}>
            <h1 style={{
                    marginBottom: '5px'
-            }}>Full Name: <span>{user.flname}</span></h1>
+            }}>Full Name: <span>{selectedUser.flname}</span></h1>
 
             <h1 style={{
                    marginBottom: '10px'
-            }}>Email: <span>{user.email}</span></h1>
+            }}>Email: <span>{selectedUser.email}</span></h1>
            </div>
             <button className="button button-gap" onClick={onClose}>Close</button>
-            <button className="button is-danger" >Edit Account</button>
 
             
         </div>
@@ -37,4 +36,4 @@ const ProfileModal = ({ onClose }) =>{
     );
 };
 
-export default ProfileModal;
+export default UserModal;

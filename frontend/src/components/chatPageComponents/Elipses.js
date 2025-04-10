@@ -10,7 +10,7 @@ function ElispsesIcon(props){
     }
     return(
     <div className="icon-hover">
-        <i style={ElipsesIconStyle} className="fa-solid fa-ellipsis"></i>
+        <i style={ElipsesIconStyle} className="fa-solid fa-ellipsis" onClick={props.onClick}></i>
     </div>
     );
 }

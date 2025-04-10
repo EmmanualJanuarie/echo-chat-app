@@ -12,9 +12,7 @@ function ExternalCard(props){
     return(
         <div className='card-justify-center'>
             <div className="card card-width-95" style={cardStyle}>
-                    <form>
                         {props.children}
-                    </form>
             </div>
         </div>
     );
