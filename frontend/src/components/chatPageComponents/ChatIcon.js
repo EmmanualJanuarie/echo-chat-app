@@ -11,7 +11,6 @@ function ChatIcon(props){
     }
     return(
     <div>
-        <Dot borderRadius={'50%'}  height={'10px'}  position={'relative'}/>
         <i style={ChatIconStyle} className="fa-solid fa-comment icon-hover" onClick={props.onClick}></i>
     </div>
     );

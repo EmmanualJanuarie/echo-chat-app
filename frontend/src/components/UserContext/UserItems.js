@@ -6,13 +6,13 @@ import Column from "../Column";
 import Heading from "../chatPageComponents/Heading";
 import '../../styles/UserItems.css';
 
-const UserItems = ({user, handleFunction}) =>{
+const UserItems = ({user, handleFunction, selected}) =>{
   return (
     <div className="usercards" id="userCards">
         <Card
                 onClick={handleFunction}
                 cursor={"pointer"}
-                backgroundColor={"#ffffff"}
+                backgroundColor={selected ? "#e0f7fa" : "#ffffff"} 
                 marginBottom={'20px'}
             >
             <Columns  position={'relative'} display={'flex'}>

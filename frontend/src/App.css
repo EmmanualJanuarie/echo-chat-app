@@ -96,8 +96,9 @@
   border: 0px;
   border-radius: 0px;
   bottom: 6px;
-  left: 40px;
+  left: 0px;
 }
+
 .reply-input:focus{
   border: 0px;
   outline: none;
@@ -113,5 +114,12 @@
 .chat-section{
   position: relative;
   top: 160px;
+  margin: auto;
+}
+
+.spinner{
+  position: relative;
+  top: 250px;
+  font-size: 40px;
 }
 

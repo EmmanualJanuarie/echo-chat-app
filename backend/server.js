@@ -38,7 +38,7 @@ app.use(errorHandler);
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: "http://localhost:5000",
     },
 });
 

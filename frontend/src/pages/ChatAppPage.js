@@ -24,16 +24,15 @@ import ProfileModal from "../components/modals/ProfileModal.js";
 import PopUp from "../components/PopUp.js";
 import { useNavigate } from "react-router-dom";
 import UserItems from "../components/UserContext/UserItems.js";
-import UserChats from "../components/UserContext/UserChats.js";
 import '../styles/selectedUser.css';
 import GroupChatModal from "../components/modals/GroupChatModal.js";
 import { getSender , getSenderFull} from "../utils/chatSender.js";
 import UserModal from "../components/modals/UserModal.js";
-import { io } from "socket.io-client";
-import SingleChat from "../components/UserContext/SingleChat.js";
+import Spinner from "../components/Spinner.js";
+import ScrollableChats from "../components/UserContext/ScrollableChats.js";
 import '../styles/MessageSection.css';
 
-function ChatAppPage({ fetchAgain, setFetchAgain }){
+function ChatAppPage(){
     const [popUpContent, setPopUpContent] = useState('');
     const [selectedUser, setSelectedUser] = useState(null); // State to track selected user
     const [popUpPosition, setPopUpPosition] = useState('');
@@ -42,16 +41,11 @@ function ChatAppPage({ fetchAgain, setFetchAgain }){
     const [loggedUser, setLoggedUser] = useState('');
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
-    const [socketConnected, setSocketConnected] = useState(false);
-    const [messageContent, setMessageContent] = useState();
-    const [typing, setTyping] = useState(false);
-    const [istyping, setIsTyping] = useState(false);
-    const [selectedChatCompare, setSelectedChatCompare] = useState("");
-    const [socket, setSocket] = useState(" ");
-    const ENDPOINT = "*"; 
+    const [loading, setLoading] = useState();
 
 
-    const { user, chats, setChats, selectedChat, setNotification, notification  } = ChatState();
+
+    const { user, chats, setChats, selectedChat,setSelectedChat,  setNotification, notification  } = ChatState();
    
 
     const showPopUpMessage = (content, color, position) => {
@@ -68,6 +62,7 @@ function ChatAppPage({ fetchAgain, setFetchAgain }){
     const [isModalOpen, setIsModalOpen] = useState(false); // State to track modal visibility
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false); // State to track modal visibility
     const [isUserModalOpen, setIsUserModalOpen] = useState(false); // State to track modal visibility
+    const [imageFile, setImageFile] = useState('');
 
     const [searchResult, setSearchResult] = useState([]);
     // const [searchLoadingChat, setLoadingChat] = useState([]);
@@ -102,6 +97,14 @@ function ChatAppPage({ fetchAgain, setFetchAgain }){
         setIsUserModalOpen(true); // Open the modal
     };
 
+    // Function to handle image selection
+const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        setImageFile(file);
+    }
+};
+
     const formatTime = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -123,17 +126,125 @@ function ChatAppPage({ fetchAgain, setFetchAgain }){
         e.preventDefault();
     };
 
+    const fetchMessages = async (event) =>{
+        if(!selectedChat) return;
+
+        try {
+            const config = {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                },
+            }; 
+
+              setLoading(true);
+              const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, 
+                config);
+
+            console.log(messages);
+            
+            setMessages(data);
+            setLoading(false);
+        } catch (error) {
+            showPopUpMessage("Failed to load message", "yellow");
+        }
+    }
+
+    const sendMessage = async (event) => {
+        if (event.key === "Enter" && newMessage) {
+            event.preventDefault();
+            if (!selectedChat) {
+                console.error("No chat selected");
+                showPopUpMessage("No chat selected!", "red");
+                return; // Exit the function if no chat is selected
+            }
+    
+            try {
+                const config = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+    
+                const { data } = await axios.post('http://localhost:5000/api/message', {
+                    content: newMessage,
+                    chatId: selectedChat._id,
+                }, config);
+    
+                console.log(data);
+                setMessages([...messages, data]);
+            } catch (error) {
+                console.error("Error sending message:", error);
+                showPopUpMessage("Failed to send message", "yellow");
+            }
+        }
+    }
+
+    const sendImage = async (imageFile) => {
+        if (!imageFile) {
+            console.error("No image file selected");
+            showPopUpMessage("Please select an image to send!", "red");
+            return; // Exit the function if no image is selected
+        }
+    
+        if (!selectedChat) {
+            console.error("No chat selected");
+            showPopUpMessage("No chat selected!", "red");
+            return; // Exit the function if no chat is selected
+        }
+    
+        try {
+            const formData = new FormData();
+            formData.append("chatId", selectedChat._id);
+            formData.append("image", imageFile); // Append the image file
+    
+            const config = {
+                headers: {
+                    "Content-Type": "multipart/form-data", // Change to multipart/form-data
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+    
+            const { data } = await axios.post('http://localhost:5000/api/message', formData, config);
+    
+            console.log(data);
+            setMessages((prevMessages) => [...prevMessages, data]); // Update messages with the new image message
+            showPopUpMessage("Image sent successfully!", "green"); // Optional success message
+        } catch (error) {
+            console.error("Error sending image:", error);
+            showPopUpMessage("Failed to send image", "yellow");
+        }
+    };
+
+    const typingHandler = (e) => {
+        if (e && e.target) {
+            setNewMessage(e.target.value);
+        } else {
+            console.error("Event is undefined or does not have a target");
+        }
+    }
+
     const handleUserSelect = async (user) => {
         if (user && user._id) {
-            setSelectedUser(user);
-            localStorage.setItem('selectedUser', JSON.stringify(user)); // Save to localStorage
-            await accessChat(user._id);
-            await fetchMessages(user._id); // Fetch messages for the selected chat
-            console.log(user + user._id);
+            setSelectedUser (user);
+            localStorage.setItem('selectedUser ', JSON.stringify(user)); // Save to localStorage
+            
+            // Await the result of accessChat
+            const chat = await accessChat(user._id);
+            
+            // Check if chat is valid before setting it
+            if (chat) {
+                setSelectedChat(chat); // Set the selected chat here
+                console.log("Selected chat:", chat);
+            } else {
+                console.error("Failed to access chat");
+                showPopUpMessage("Failed to access chat!", "red");
+            }
         } else {
             showPopUpMessage('Invalid user selected!', 'red');
         }
     };
+
     const accessChat = async (userId) => {
         if (!user || !user.token) {
             showPopUpMessage('User is not authenticated!', 'red');
@@ -155,6 +266,8 @@ function ChatAppPage({ fetchAgain, setFetchAgain }){
           } else {
             console.log("Chat already exists in the state");
           }
+
+          return data;
         } catch (error) {
             showPopUpMessage('Failed to access chat!', 'red');
         }
@@ -184,126 +297,9 @@ function ChatAppPage({ fetchAgain, setFetchAgain }){
         }
     };
 
-    const sendMessage = async (event) => {
-        if (event.key === "Enter" && newMessage) {
-            event.preventDefault();
-            socket.emit("stop typing", selectedChat._id);
-            try {
-                const config = {
-                    headers: {
-                        "Content-type": "application/json",
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                };
-                const { data } = await axios.post("/api/message", {
-                    content: newMessage,
-                    chatId: selectedChat._id,
-                }, config);
-                console.log("send data log", data);
-                socket.emit("new message", data);
-                setMessages((prevMessages) => [...prevMessages, data]);
-                setNewMessage(""); // Clear the input after sending
-            } catch (error) {
-                showPopUpMessage('Failed to send the Message!', 'yellow');
-            }
-        }
-    };
-
-
-     //logic for obtaining the message
-     const fetchMessages = async () => {
-        if (!selectedChat) return;
-    
-        try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-    
-            const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
-            console.log("fetch data log", data);
-            
-            setMessages(data);
-            socket.emit("join chat", selectedChat._id);
-        } catch (error) {
-            showPopUpMessage('Failed to load messages!', 'red');
-        }
-    };
-    
-
-    const handleSendMessage = async (event) => {
-        if (event.key === "Enter" && newMessage) {
-            event.preventDefault(); // Prevent the default action (like a form submission)
-            await sendMessage(event); // Call the sendMessage function
-        }
-    };
-    
-    useEffect(() => {
-        // Initialize socket connection
-        const newSocket = io(ENDPOINT, {
-            transports: ['websocket', 'polling'],
-        });
-
-        // Handle connection errors
-        newSocket.on("connect_error", (err) => {
-            console.error("Socket connection error:", err);
-        });
-
-        setSocket(newSocket);
-
-        // Emit setup event
-        newSocket.emit("setup", user);
-
-        // Socket event listeners
-        newSocket.on("connected", () => setSocketConnected(true));
-        newSocket.on("typing", () => setIsTyping(true));
-        newSocket.on("stop typing", () => setIsTyping(false));
-
-        // Listen for incoming messages
-        newSocket.on("message received", (newMessageReceived) => {
-            if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id) {
-                // Handle notification logic here
-            } else {
-                setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
-            }
-        });
-
-        // Cleanup function to disconnect the socket
-        return () => {
-            if (newSocket) {
-                newSocket.disconnect();
-            }
-        };
-    }, [user]); // Only re-run the effect if user changes
-
-    useEffect(() => {
-        // Fetch messages when selectedChat changes
+    useEffect(()=>{
         fetchMessages();
-        setSelectedChatCompare(selectedChat); // Update the selected chat comparison
-    }, [selectedChat]); // Only re-run the effect if selectedChat changes
-
-
-const typingHandler = (e) => {
-    setNewMessage(e.target.value);
-
-    if (!socketConnected) return;
-
-    if (!typing) {
-        setTyping(true);
-        socket.emit("typing", selectedChat._id);
-    }
-    let lastTypingTime = new Date().getTime();
-    var timerLength = 3000;
-    setTimeout(() => {
-        var timeNow = new Date().getTime();
-        var timeDiff = timeNow - lastTypingTime;
-        if (timeDiff >= timerLength && typing) {
-            socket.emit("stop typing", selectedChat._id);
-            setTyping(false);
-        }
-    }, timerLength);
-};
+    }, [selectedChat])
 
     return(
         <div>
@@ -461,6 +457,7 @@ const typingHandler = (e) => {
                             <div className="card-style">
                                 <Card color={'white'} position={'absolute'} backgroundColor={'#f0f2f7'}>
                                     <SearchSection>
+                                        
                                         {searchResult.length > 0 ? (
                                             searchResult.map(user => (
                                                 <UserItems 
@@ -470,23 +467,36 @@ const typingHandler = (e) => {
                                                 />
                                             ))
                                         ) : (
-                                            <div>
+                                           null
+                                        )}
+
+                                        <div>
                                                 {selectedUser  && (
                                                     <div className="chat-card selected-card-style">
                                                         <div className="chat-header">
                                                             <img src={selectedUser.pic} alt="User  Avatar" className="avatar" />
                                                             <div className="user-info">
                                                                 <h3 className="username"><b>{selectedUser.flname}</b></h3>
-                                                                <p className="timestamp">{formatTime(selectedUser.updatedAt)}</p>
+                                                                <p className="timestamp">{`Last Reply: ${formatTime(selectedUser.updatedAt)}`}</p>
                                                             </div>
                                                         </div>
                                                         <div className="chat-message">
-                                                            <p>Hello! How are you today?</p>
+
+                                                            {chats ? (
+                                                                <div>
+                                                                    {chats.map(chat => (
+                                                                        <div key={chat._id}>
+                                                                            {!chat.isGroupChat
+                                                                                ? getSender(loggedUser , chat.users)
+                                                                                : chat.chatName}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            ) : null}
                                                         </div>
                                                     </div>
                                                 )}
                                             </div>
-                                        )}
                                     </SearchSection>
                                 </Card>
                             </div>
@@ -546,26 +556,29 @@ const typingHandler = (e) => {
                             <Column>
                             <Header backgroundColor={'white'} margin={'none'} padding={'none'} borderRadius={'0px'} height={'62vh'}>
                                 {/* Render Messages */}
-                                <div className="messages-container">
-                                    <div className="messages">
-                                        {messages.map((msg) => (
-                                            <div key={msg._id} className={`message ${msg.sender._id === user._id ? 'sent' : 'received'}`}>
-                                                <p>{msg.content}</p>
-                                                <span className="timestamp">{formatTime(msg.createdAt)}</span> {/* Optional: Display timestamp */}
+                                    <div>
+                                        {loading ? (
+                                            <Spinner />
+                                        ): (
+                                            <div>
+                                                {/* Messages here */}
+                                                <div>
+                                                    <ScrollableChats messages={messages} />
+                                                </div>
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
-                                </div>
-                                <Card/>
+                               
                             </Header>
 
                                 <Header backgroundColor={'white'} margin={'none'} padding={'none'} borderRadius={'0px'}>
                                     {/* send reply */}
                                     <SendBar 
                                         value={newMessage}
-                                        onChange={typingHandler} 
-                                        // onSubmit={sendMessage}
-                                        onKeyDown={handleSendMessage} // Pass the sendMessage function
+                                        onKeyDown={sendMessage}
+                                        onChange={typingHandler}
+                                        handleImageChange={handleImageChange}
+                                        onClick={sendImage}
                                     />
                                 </Header>
                             </Column>

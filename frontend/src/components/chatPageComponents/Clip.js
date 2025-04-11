@@ -1,5 +1,5 @@
 import '../../App.css';
-function Clip(props){
+function Clip(props, handleImageChange){
     const ClipIconStyle = {
         color: props.color,
         position: props.position,
@@ -10,7 +10,21 @@ function Clip(props){
     }
     return(
     <div className="icon-hover">
-        <i style={ClipIconStyle} className="fa-solid fa-paperclip"></i>
+         <input
+                type="file"
+                accept="image/*"
+                onChange={ <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }} // Hide the input
+                    id="imageInput" // Give it an ID for reference
+                />}
+                style={{ display: 'none' }} // Hide the input
+                id="imageInput" // Give it an ID for reference
+            />
+        <i style={ClipIconStyle} className="fa-solid fa-paperclip"
+        onClick={() => document.getElementById('imageInput').click()}></i>
     </div>
     );
 }
