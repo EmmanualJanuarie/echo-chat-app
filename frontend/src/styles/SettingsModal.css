@@ -1,0 +1,218 @@
+#settings{
+    width: 20%;
+    height: 60vh;
+}
+
+#settings{
+    display: flex;
+    justify-content: left;
+    text-align: left;
+    border-radius: 25%;
+    border: 3px;
+
+    /* setting position  */
+    position: absolute;
+    top:308px;
+    left:-40px;
+    transition: transform 0.9s ease; /* Slide in effect */
+}
+
+.column .right-col{
+    max-width: 109vw;
+    width: 120%;
+}
+
+#settings .col1-radius{
+    border-radius: 13px 0px 0px 13px;
+    border-top: 1px solid #474141;
+    border-left: 1px solid #474141;
+    border-bottom: 1px solid #474141;
+    
+}
+
+.col2-radius{
+    border-radius: 0px 13px 13px 0px;
+    border-left: 0px;
+    border-top: 1px solid #474141;
+    border-right: 1px solid #474141;
+    border-bottom: 1px solid #474141;
+}
+
+.setting-icon-p-right-1{
+    padding-right: 30px;
+    font-size: 15px;
+}
+
+.setting-icon-p-right-2{
+    padding-right: 20px;
+    font-size: 15px;
+}
+
+.setting-icon-p-right-3{
+    padding-right: 40px;
+    font-size: 15px;
+}
+
+.bottomm-button{
+    position: relative;
+    top: 300px;
+}
+
+.bottomm-button:hover{
+    color: #b38867;
+    cursor: default;
+}
+
+#settings .settings-card {
+    display: inline-block;
+    padding: 10px;
+    background-color: #292929; /* Subtle base color */
+    transition: all 0.3s ease; /* Smooth transition */
+    cursor: default;
+    margin-bottom: 20px;
+}
+
+#settings .settings-card:hover{
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle base color */
+    border-radius: 9px ;
+}
+
+.bottom-20{
+    margin-bottom:80px ;
+}
+
+.top-2{
+    margin-top:20px ;
+}
+
+.top-3{
+    margin-top:10px ;
+}
+
+
+.help-section{
+    position: relative;
+    right: 12px;
+}
+
+.userpicture {
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 1px solid gray; 
+    display: block; 
+}
+
+.font-size-xl{
+    font-size: x-large;
+}
+
+.font-size-l{
+    font-size: larger;
+}
+
+.font-size-m{
+    font-size: medium;
+}
+
+.font-size-s{
+    font-size: small;
+}
+
+.cols-gap-xl{
+    gap:100%;
+}
+.cols-gap-l{
+    gap:80%;
+}
+.cols-gap-m{
+    gap:60%;
+}
+.cols-gap-s{
+    gap:40%;
+}
+.cols-gap-xs{
+    gap:20%;
+}
+
+.cols-justify-content{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.input-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background-color: white;
+    width: 100%; /* Adjust width as needed */
+}
+
+input[type="text"] {
+    border: none;
+    outline: none;
+    flex: 1; /* Allow input to take remaining space */
+    padding: 5px;
+    font-size: 16px; /* Adjust input font size */
+    width: 100%; /* Adjust width as needed */
+}
+
+.input-bar input{
+    color: white ;
+    transition: border-color 0.3s;
+}
+
+#flnameInput{
+    display: none;
+    position: relative;
+    top: 20px;
+    margin-bottom: 40px;
+
+}
+
+.btns-100{
+    position: relative;
+    top: 5px;
+    width: 100%;
+}
+
+#bioId{
+    position: relative;
+    bottom: 30px;
+}
+
+#bioInput{
+    display: none;
+    margin-bottom: 40px;
+}
+
+.contactNum{
+    position: relative;
+    bottom: 30px;
+}
+
+.tel{
+    position: relative;
+    bottom: 30px; 
+    left: 1px; 
+}
+
+.contactus-text{
+   color: #b38867;
+   cursor: default;
+}
+
+.contactus-text:hover{
+    color: white;
+ }
+
+ #contactusId{
+    cursor: not-allowed;
+ }
+
+ #faqsId{
+    cursor: not-allowed;
+ }

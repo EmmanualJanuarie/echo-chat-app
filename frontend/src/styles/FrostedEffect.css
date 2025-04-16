@@ -1,0 +1,16 @@
+.outerCard {
+    position: relative;
+    overflow: hidden; /* Ensures the frosted effect doesn't overflow */
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+    border-radius: 10px; /* Rounded corners */
+    backdrop-filter: blur(9px); /* Frosted glass effect */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+    padding: 20px; /* Add some padding */
+}
+
+.cardContent-width-70 {
+    width: 70%; /* Adjust width as needed */
+}

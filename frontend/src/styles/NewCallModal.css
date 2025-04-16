@@ -1,0 +1,74 @@
+#newCalls .modal-size{
+    width: 20%;
+    height: 70vh;
+}
+
+#newCalls .modal-card-pos{
+    display: flex;
+    justify-content: left;
+    text-align: left;
+
+    /* setting position  */
+    position: absolute;
+    top:70px;
+    left: 270px;
+}
+
+.card .callmodal-bg-clr{
+    background-color: red;
+}
+
+.button-style{
+    padding: 6px;
+    width: 25%;
+    border-radius: 5px;
+    margin-right: 10px;
+    position: relative;
+    top: 10px;
+    cursor: default;
+}
+.button-style:hover{
+    color: black;
+}
+
+.cancel-button-style{
+    padding: 6px;
+    width: 42%;
+    border-radius: 5px;
+    border: 1px solid gray;
+    position: relative;
+    top: 10px;
+    cursor: default;
+}
+
+#buttons{
+    display: none;
+}
+
+.subheader{
+    position: relative;
+    top: 30px;
+    left: 10px;
+}
+
+.callcard{
+    background-color: #292929;
+    height: 4vh;
+    text-align: center;
+    justify-content: center;
+    padding: 10px;
+    position: relative;
+    top: 26rem;
+    height: 10%;
+}
+
+.close-btn{
+    cursor: default;
+    padding: 10px;
+    background-color: #292929;
+    color: white;
+}
+
+.close-btn:hover{
+    color: #b38867;
+}

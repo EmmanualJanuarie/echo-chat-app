@@ -1,5 +1,5 @@
 import { Cursor } from 'mongoose';
-import '../../styles/ChatAppPage.css';
+import '../../styles/Card.css';
 function Card(props){
     const cardStyle = {
         color: props.color,
@@ -11,14 +11,16 @@ function Card(props){
         position: props.position,
         bottom: props.bottom,
         cursor: props.cursor,
+        height: props.height,
         marginBottom: props.marginBottom
     }
     return(
-            <div className="card card-width-95" style={cardStyle} onClick={props.onClick}>
-                <div className="card-content">
+            <div>
+                <div className="card" style={cardStyle} onClick={props.onClick}>
                     {props.children}
                 </div>
             </div>
+            
     );
 }
 

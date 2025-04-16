@@ -1,32 +1,13 @@
 import '../../styles/Avatar.css';
+import { ChatState } from '../../Context/ChatProvider';
 
 function Avatar(props) {
-    const imageStyle = {
-        borderRadius: props.borderRadius,
-        border: props.border,
-        width: props.width,
-        height: props.height,
-        objectFit: props.objectFit,
-        marginBottom: props.marginBottom,
-        backgroundColor: props.backgroundColor
-    };
-
+    const { user } = ChatState();
     return (
-        <div className="user-avatar-hover file-upload">
-            <label htmlFor="file-input" className="file-label">
-                <img 
-                    src={props.src} 
-                    alt={props.alt} 
-                    style={imageStyle} 
-                />
-            </label>
-            <input 
-                id="file-input" 
-                type="file" 
-                accept="image/*" 
-                className="file-input"  
-                onChange={props.onChange} // Pass the selected file
-                style={{ display: 'none' }} // Hide the input
+        <div className='image-container'>
+            <img className='image'
+                src={user?.pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
+                alt="Avatar" 
             />
         </div>
     );

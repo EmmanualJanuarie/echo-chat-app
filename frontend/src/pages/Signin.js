@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/Signin.css';
+import '../styles/FrostedEffect.css'
 import '../styles/FormCard.css';
 import Input from '../components/Input';
 import FormCard from '../components/FormCard';

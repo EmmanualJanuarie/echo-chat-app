@@ -4,8 +4,12 @@
     margin: 0;
 }
 
-html{
-    background-color:#7ed957;
+html {
+    background-image: url('../../src/assets/chat-main-image.jpg');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat; 
     overflow-x: hidden; 
     overflow-y: hidden;
+    height: 100%;
 }
