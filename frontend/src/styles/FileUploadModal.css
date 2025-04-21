@@ -1,0 +1,28 @@
+#fileUpload{
+    width: 15%;
+    height: 10%;
+
+    /* Setting position of modal */
+    position: absolute;
+    top: 530px;
+    right: 1250px;
+
+    /* text align of modal */
+    text-align: left;
+}
+
+#img_item{
+    position: relative;
+    top: 10px;
+}
+
+.effect-hover-card{
+    cursor: default;
+    padding-left: 20px;
+}
+
+.effect-hover-card:hover{
+    background-color: #ccc;
+    border-radius: 5px;
+    color: black;
+}

@@ -3,14 +3,26 @@ import React, { useRef, useEffect, useState} from 'react';
 import SearchBar from '../chatPageComponents/SearchBar';
 import Card from '../chatPageComponents/Card';
 import { ChatState } from '../../Context/ChatProvider';
+import { useNavigate } from "react-router-dom";
 
 const SettingsModal = ({onClose}) =>{
+
+    const navigate = useNavigate();
     const { user } = ChatState();
     const [fullName, setFullName] = useState(user?.flname);
     const [bio, setBio] = useState(user?.bio);
     const [activeSection, setActiveSection] = useState("profile"); 
     const [profileInputs, setProfileInputs] = useState("fullname"); 
     const [bioInput, setBioInput] = useState("bio"); 
+
+    //function to logout user
+    const logoutHandler = () =>{
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("userEmail");
+        localStorage.removeItem("updatedUserInfo");
+        localStorage.removeItem("selectedUser");
+        navigate('/');
+    }
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -246,7 +258,7 @@ const SettingsModal = ({onClose}) =>{
                             <p className='tel'>{user.tel}</p>
 
                             <hr/>
-                            <button className='button is-danger'>Logout</button>
+                            <button className='button is-danger' onClick={logoutHandler}>Logout</button>
                         </div>
                     </div>
                 )}

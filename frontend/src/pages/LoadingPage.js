@@ -33,8 +33,9 @@ const LoadingPage = () => {
       {isLoading ? (
         <div 
           style={{
-            backgroundColor: '#7ed957',
             height: '100vh', // Full height for loading screen
+            backgroundColor: '#1a2228',
+            width: '100%',
             display: 'flex', // Center the content
             justifyContent: 'center', // Center the content
             alignItems: 'center' // Center the content

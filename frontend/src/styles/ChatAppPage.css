@@ -15,6 +15,18 @@
     color: white;
 }
 
+/* Changing width   of username */
+#fulname{
+    position: absolute;
+    width: 700px;
+}
+
+#activeTime{
+    position: absolute;
+    top: 30px;
+    width: 700px;
+}
+
 /* Sty;es for border */
 .border-left{
     border-left:1px solid #282424;
@@ -122,10 +134,10 @@
     top: 520px;
 }
 #chatsCol2{ /*remove after completed */
-    display: none;
+    display: grid;
 }
 #chatsCol3{
-    display: block;
+    display: none;
 }
 
 /* Hover effect for video call start button */
@@ -158,6 +170,7 @@
 #contactBtns{
     position: relative;
     top: 6px;
+    left: 100px;
 }
 
 #clip-icon{
@@ -172,6 +185,8 @@
 
 #mic-icon{
     font-size: 20px;
+    position: relative;
+    
 }
 
 #mic-icon:hover{

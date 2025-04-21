@@ -9,10 +9,10 @@ import '../../styles/UserItems.css';
 const UserItems = ({user, handleFunction, selected}) =>{
   return (
     <div className="usercards" id="userCards">
-        <Card
+        <div className="card" 
                 onClick={handleFunction}
                 cursor={"pointer"}
-                backgroundColor={selected ? "#e0f7fa" : "#ffffff"} 
+                backgroundColor={selected ? "red" : "#ffffff"} 
                 marginBottom={'20px'}
             >
             <Columns  position={'relative'} display={'flex'}>
@@ -27,7 +27,7 @@ const UserItems = ({user, handleFunction, selected}) =>{
                     // top: -8px',
                     objectFit: 'cover',
                     borderRadius: '50%',
-                    border: '2px solid black'
+                    border: '1px solid black'
                 }}
                 />
                 </Column>
@@ -43,7 +43,7 @@ const UserItems = ({user, handleFunction, selected}) =>{
                   </div>
                 </Column>
                 </Columns>
-        </Card>
+        </div>
     </div>
   );
 };

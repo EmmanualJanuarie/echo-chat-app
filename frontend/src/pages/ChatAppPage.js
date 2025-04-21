@@ -8,18 +8,308 @@ import '../styles/ChatAppPage.css';
 import SearchBar from "../components/chatPageComponents/SearchBar";
 import StatusCard from "../components/StatusCard";
 import Avatar from "../components/chatPageComponents/Avatar";
+
+// Importing Modals
 import NewCallModal from "../components/modals/NewCallModal";
 import SettingsModal from "../components/modals/SettingsModal";
+
 import { ChatState } from "../Context/ChatProvider";
+import axios from 'axios'
+import ScrollableChats from "../components/UserContext/ScrollableChats.js";
+import Spinner from "../components/Spinner.js";
+
+import '../styles/MessageSection.css';
+
+import PopUp from "../components/PopUp";
+import UserItems from "../components/UserContext/UserItems";
+import { getSender , getSenderFull} from "../utils/chatSender.js";
+import '../styles/selectedUser.css';
+
 import Clip from "../components/chatPageComponents/Clip";
 
 function ChatAppPage(){
 
-    const { user } = ChatState();
+    // FOR POP UP CARD
+    const showPopUpMessage = (content, color, position) => {
+        setPopUpContent(content);
+        setPopUpColor(color);
+        setPopUpPosition(position);
+        setShowPopUp(true);
+        setTimeout(() => setShowPopUp(false), 4000); // Hide after 3 seconds
+    };
+
+    const [popUpContent, setPopUpContent] = useState('');
+    const [popUpPosition, setPopUpPosition] = useState('');
+    const [showPopUp, setShowPopUp] = useState(false);
+    const [popUpColor, setPopUpColor] = useState('');
+
+    const [selectedUsers, setSelectedUsers] = useState([]); // State to track selected user
+    const [singleSelectedUser, setSingleSelectedUser] = useState(null); // State to track selected user
+    const [searchedSelectedUsers, setSearchedSelectedUsers] = useState([]); // State to track selected user
+
+
+    const [loggedUser, setLoggedUser] = useState('');
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [loading, setLoading] = useState();
+
+    // chatstate
+    const { user, chats, setChats, selectedChat,setSelectedChat } = ChatState();
+
+    // state created for search purposes
+    const [search, setSearch] = useState(''); // State to track search input
+
+    // State for setting the search result
+    const [searchResult, setSearchResult] = useState([]);
+
+    // state to determing if search bar is active
+    const [searchActive, setSearchActive] = useState(false); // State to track search input
+
+    // Function to handle the search of created users
+      const handleSearch = async (query) => {
+            setSearch(query);
+            if (!query) {
+                setSearchResult([]);
+                return;
+            }
+    
+            try {
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+    
+                const { data } = await axios.get(`http://localhost:5000/api/user?search=${query}`, config);
+                console.log(data);
+                setSearchActive(true); // Set search active to true when searching
+                setSearchResult(data);
+            } catch (error) {
+                console.error("Error fetching search results:", error);
+                showPopUpMessage('Failed to obtain search results!', 'red');
+            }
+        };
+
+    // function to fetch messages
+     const fetchMessages = async (event) =>{
+            if(!selectedChat) return;
+    
+            try {
+                const config = {
+                    headers: {
+                      Authorization: `Bearer ${user.token}`,
+                    },
+                }; 
+    
+                  setLoading(true);
+                  const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, 
+                    config);
+    
+                console.log(messages);
+                
+                setMessages(data);
+                setLoading(false);
+            } catch (error) {
+                showPopUpMessage("Failed to load message", "yellow");
+            }
+        }
+    
+    // Function to handle message sending
+    const sendMessage = async (event) => {
+        if (event.key === "Enter" && newMessage) {
+            event.preventDefault();
+            if (!selectedChat) {
+                console.error("No chat selected");
+                showPopUpMessage("No chat selected!", "red");
+                return; // Exit the function if no chat is selected
+            }
+    
+            try {
+                const config = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+    
+                const { data } = await axios.post('http://localhost:5000/api/message', {
+                    content: newMessage,
+                    chatId: selectedChat._id,
+                }, config);
+    
+                console.log(data);
+                setMessages([...messages, data]);
+                
+                // Clear the input field after sending the message
+                setNewMessage(""); // Assuming setNewMessage is the function to update newMessage state
+    
+            } catch (error) {
+                console.error("Error sending message:", error);
+                showPopUpMessage("Failed to send message", "yellow");
+            }
+        }
+    }
+
+    // function for typing handler
+    const typingHandler = (e) => {
+        if (e && e.target) {
+            setNewMessage(e.target.value);
+        } else {
+            console.error("Event is undefined or does not have a target");
+        }
+    }
+
+    // function to handle datetime format
+    const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        
+        // Calculate the difference in milliseconds
+        const diffInMs = now - date;
+        const diffInHours = diffInMs / (1000 * 60 * 60);
+        const diffInDays = diffInHours / 24;
+    
+        if (diffInHours < 24) {
+            // If less than 24 hours, display the time
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } else if (diffInDays > 24) {
+            // If it's yesterday
+            return "YESTERDAY";
+        } else {
+            // If older than yesterday, display the date in "dd-mm-yy" format
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+            const year = String(date.getFullYear()).slice(-2); // Get last two digits of the year
+            return `${day}-${month}-${year}`;
+        }
+    };
+
+    // function to access the chat of serached user:
+    const accessChat = async (userId) => {
+        if (!user || !user.token) {
+            showPopUpMessage('User is not authenticated!', 'red');
+          return;
+        }
+    
+        try {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${user.token}`,
+            },
+          };
+    
+          const { data } = await axios.post('http://localhost:5000/api/chat', { userId }, config);
+    
+          if (!chats.find((c) => c._id === data._id)) {
+            setChats((prevChats) => [data, ...prevChats]);
+          } else {
+            console.log("Chat already exists in the state");
+          }
+
+          return data;
+        } catch (error) {
+            showPopUpMessage('Failed to access chat!', 'red');
+        }
+      };
+
+    
+    // Function to post Image
+    const postImage = async (pics) => {
+        if (!pics) {
+            showPopUpMessage('Please select an Image!', 'yellow');
+            return;
+        }
+
+        if (pics.type === "image/jpeg" || pics.type === "image/png") {
+            const data = new FormData();
+            data.append("file", pics);
+            data.append("upload_preset", "echo-chat-app");
+            data.append("cloud_name", "dnxd86qnx");
+
+            try {
+                const res = await fetch("https://api.cloudinary.com/v1_1/dnxd86qnx/image/upload", {
+                    method: "POST",
+                    body: data,
+                });
+
+                const responseData = await res.json();
+                const imageUrl = responseData.url.toString();
+                console.log(imageUrl);
+
+                // Set the new message content to the image URL
+                setNewMessage(imageUrl); // Set the image URL as the message content
+
+                // Now send the message with the uploaded image URL
+                await sendMessage(imageUrl);
+
+                showPopUpMessage('Image uploaded and message sent!', 'green');
+            } catch (err) {
+                console.log(err);
+                showPopUpMessage('Error uploading image!', 'red');
+            }
+        } else {
+            showPopUpMessage('Please Select an Image!', 'yellow');
+        }
+    };
+
+    // function to handle user select when serached
+    const handleUserSelect = async (user) => {
+        if (user && user._id) {
+            // Check if the user is already selected
+            if (!searchedSelectedUsers.find(u => u._id === user._id)) {
+                setSearchedSelectedUsers(prevUsers => [...prevUsers, user]); // Add new user to the array
+                localStorage.setItem('selectedUsers', JSON.stringify([...searchedSelectedUsers, user])); // Save to localStorage
+
+                // Await the result of accessChat
+                const chat = await accessChat(user._id);
+                
+                // Check if chat is valid before setting it
+                if (chat) {
+                    setSelectedChat(chat); // Set the selected chat here
+                    console.log("Selected chat:", chat);
+                } else {
+                    console.error("Failed to access chat");
+                    showPopUpMessage("Failed to access chat!", "red");
+                }
+            } else {
+                showPopUpMessage('User  already selected!', 'yellow');
+            }
+        } else {
+            showPopUpMessage('Invalid user selected!', 'red');
+        }
+    };
+
+
+    // function to handle user select when serached
+    const handleSingleSelectedUser = async (user) => {
+        if (user && user._id) {
+            // Set the selected user directly, overwriting any previous selection
+            setSingleSelectedUser (user); // Store the selected user
+    
+            // Save to localStorage
+            localStorage.setItem('singleSelectedUser ', JSON.stringify(user));
+    
+            // Await the result of accessChat
+            const chat = await accessChat(user._id);
+            
+            // Check if chat is valid before setting it
+            if (chat) {
+                setSelectedChat(chat); // Set the selected chat here
+                console.log("Selected chat:", chat);
+            } else {
+                console.error("Failed to access chat");
+                showPopUpMessage("Failed to access chat!", "red");
+            }
+        } else {
+            showPopUpMessage('Invalid user selected!', 'red');
+        }
+    }
 
     const [activeSection, setActiveSection] = useState("chats"); 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+    const [isFileModalOpen, SetIsFileModalOpen] = useState(false)
 
     // Handler functions to switch sections
     const showChats = () => {
@@ -29,6 +319,19 @@ function ChatAppPage(){
             chatsCol1.style.display = "block";
         } else {
             console.error("Element with ID 'chatsCol1' not found.");
+        }
+    };
+
+    // Function to show the selected users chats with user
+    const showSelectedUserChats = () => {
+        setActiveSection("chats");
+        const chatsCol2 = document.getElementById('chatsCol2');
+        const chatsCol3 = document.getElementById('chatsCol3');
+        if (chatsCol2) {
+            chatsCol2.style.display = "none";
+            chatsCol3.style.display = "block";
+        } else {
+            console.error("Element with ID 'chatsCol3' not found.");
         }
     };
     const showCalls = () => {
@@ -102,6 +405,16 @@ function ChatAppPage(){
         setIsModalOpen(true); // Open the modal
     };
 
+    // functions to close and open file modal
+    const closeFileModal = () => {
+        SetIsFileModalOpen(false); // Close the modal
+    };
+
+    // Toggling file modal
+    const toggleFileModal = () => {
+        SetIsFileModalOpen(true); // Close the modal
+    };
+
     // Function to close the modal
     const closeSettingsModal = () => {
         setIsSettingsModalOpen(false); // Close the modal
@@ -111,6 +424,10 @@ function ChatAppPage(){
     const toggleSettingsModal = () => {
         setIsSettingsModalOpen(true); // Open the modal
     };
+
+    useEffect(()=>{
+        fetchMessages();
+    }, [selectedChat])
 
     return(
         <div>
@@ -125,6 +442,7 @@ function ChatAppPage(){
         
 
         {/* Chat page columns */}
+        {showPopUp && <PopUp content={popUpContent} color={'black'} backgroundColor={popUpColor} position={popUpPosition}/>}
         <div className="columns is-gapless column-size">
             <div className="column is-one-fifth" id="sideNavBar">
                 <Card borderRadius={"0px"} backgroundColor={"#202020"} height={"100vh"}>
@@ -170,8 +488,51 @@ function ChatAppPage(){
                                             border={"1px solid #343434"}
                                             margin={"20px 0 0 0"}
                                             placeholder={'Search or start new chat'}
+
+                                            // for detect change in search
+                                            onChange={(e) => handleSearch(e.target.value)}
                                         />
-                                        <div>{/* Add searched chats here */}</div>
+                                        <div>
+                                            {/* Search results here */}
+                                            {searchActive ? (
+                                                <div className="card-style">
+                                                    <Card color={'white'} position={'absolute'} backgroundColor={'#2c2c2c'} boxShadow={"none"} >
+                                                        <div>
+                                                            
+                                                            {searchResult.length > 0 ? (
+                                                                searchResult.map(user => (
+                                                                    <UserItems 
+                                                                        key={user._id}
+                                                                        user={user}
+                                                                        handleFunction={() => handleUserSelect(user)}
+                                                                    />
+                                                                ))
+                                                            ) : (
+                                                                null
+                                                            )}
+                    
+                                                            <div>
+                                                            {searchedSelectedUsers.map(user => (
+                                                                <div key={user._id} className="chat-card selected-card-style"
+                                                                onClick={() => {
+                                                                    handleSingleSelectedUser (user);
+                                                                    showSelectedUserChats();
+                                                                }}>
+                                                                    <div className="chat-header">
+                                                                        <img src={user?.pic} alt="User  Avatar" className="avatar" />
+                                                                        <div className="user-info">
+                                                                            <h3 className="username"><b>{user.flname}</b></h3>
+                                                                            <p className="timestamp">{`Last Reply: ${formatTime(user.createdAt)}`}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                            </div>
+                                                        </div>
+                                                    </Card>
+                                                </div>
+                                            ) : null}
+                                        </div>
                                     </span>
                                 </div>
                                 <div className="column justify-col-content" id="chatsCol2">
@@ -192,16 +553,21 @@ function ChatAppPage(){
                                                         <div className="columns" style={{position: 'relative', left: '20px', top: '9px'}}>
                                                             <div className="column">
                                                                 <div className='chats-image-container'>
+                                                                {singleSelectedUser  && (
                                                                     <img className='chats-image'
-                                                                        src={user?.pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
+                                                                        src={singleSelectedUser?.pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
                                                                         alt="Avatar" 
                                                                     />
+                                                                )}
                                                                 </div>
                                                             </div>
-                                                            <div className="column">
-                                                                <p>Username</p>
-                                                                <p>Last seen</p>
-                                                            </div>
+
+                                                            {singleSelectedUser  && ( // Check if singleSelectedUser  is not null
+                                                                <div className="column">
+                                                                    <p id="fulname">{singleSelectedUser.flname || "Username"}</p>
+                                                                    <p id="activeTime">Last seen</p>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="column" id="contactBtns">
                                                             <button className="button"><i class="fa-solid fa-video"></i></button>
@@ -215,6 +581,19 @@ function ChatAppPage(){
                                         border-top">
                                             <div className="card message-section" style={{borderRadius: '0px', backgroundColor: '#2c2c2c'}}>
                                                 {/* Message will be displayeed here */}
+                                                <div>
+                                                    
+                                                    {singleSelectedUser && loading ? (
+                                                        <Spinner />
+                                                    ): (
+                                                        <div>
+                                                            {/* Messages here */}
+                                                            <div>
+                                                                <ScrollableChats messages={messages} />
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="column last-col-radius">
@@ -223,14 +602,28 @@ function ChatAppPage(){
                                                     <div className="columns cols-gap">
                                                         <div className="columns is-gapless" style={{position: 'relative', left: '20px', top: '9px'}}>
                                                             <div className="column is-half">
-                                                            <i class="fa-solid fa-paperclip" id="clip-icon"></i>
+                                                                <i 
+                                                                    className="fa-solid fa-paperclip" 
+                                                                    id="clip-icon" 
+                                                                    onClick={() => document.getElementById('file-input').click()} // Trigger file input click
+                                                                    style={{ cursor: 'pointer' }} // Change cursor to pointer for better UX
+                                                                ></i>
+                                                                <input 
+                                                                    id="file-input" 
+                                                                    type="file" 
+                                                                    accept="image/*" 
+                                                                    className="file-input" 
+                                                                    onChange={(e) => postImage(e.target.files[0])}
+                                                                    style={{ display: 'none' }} // Hide the input
+                                                                />
                                                             </div>
                                                             <div className="column " id="replyInput-col">
                                                                 <input type="text" id="replyInput" style={{ backgroundColor: '#202020' }}
-                                                                placeholder="Type a response"/>
+                                                                placeholder="Type a response" 
+                                                                value={newMessage} onKeyDown={sendMessage} onChange={typingHandler}/>
                                                             </div>
                                                         </div>
-                                                        <div className="column" id="contactBtns">
+                                                        <div className="column" id="mic-icon">
                                                             <i class="fa-solid fa-microphone" id="mic-icon"></i>
                                                         </div>
                                                     </div>

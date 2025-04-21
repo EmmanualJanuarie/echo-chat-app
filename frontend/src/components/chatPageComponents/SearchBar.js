@@ -46,7 +46,8 @@ function SearchBar(props) {
     return (
         <div className="search-bar" style={inputStyle} ref={searchBarRef} >
             <i className="fa-solid fa-magnifying-glass search-icon" style={{ color: 'white', marginLeft: '10px' }}></i>
-            <input type="text" placeholder={props.placeholder} style={{ backgroundColor: '#202020' }} ref={inputRef} />
+            <input type="text" placeholder={props.placeholder} style={{ backgroundColor: '#202020' }} ref={inputRef}
+                onChange={props.onChange} />
         </div>
     );
 }
