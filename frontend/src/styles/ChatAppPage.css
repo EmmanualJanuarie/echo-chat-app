@@ -1,71 +1,71 @@
 /* Styling for app logo */
-.logo-size{
+.logo-size {
     width: 3.5%;
     height: 20px;
 }
 
 /* Style for the column size */
-.column-size{
+.column-size {
     height: 100vh;
 }
 
 /* Styling for heading size */
-.heading{
+.heading {
     font-size: 20px;
     color: white;
 }
 
-/* Changing width   of username */
-#fulname{
+/* Changing width of username */
+#fulname {
     position: absolute;
-    width: 700px;
+    width: 100%; /* Use 100% to allow it to scale */
 }
 
-#activeTime{
+#activeTime {
     position: absolute;
     top: 30px;
-    width: 700px;
+    width: 100%; /* Use 100% to allow it to scale */
 }
 
-/* Sty;es for border */
-.border-left{
-    border-left:1px solid #282424;
+/* Styles for border */
+.border-left {
+    border-left: 1px solid #282424;
 }
 
-.border-right{
-    border-right:1px solid #282424;
+.border-right {
+    border-right: 1px solid #282424;
 }
 
-.border-bottom{
-    border-bottom:1px solid #282424;
+.border-bottom {
+    border-bottom: 1px solid #282424;
 }
 
-.border-top{
-    border-top:1px solid #282424;
+.border-top {
+    border-top: 1px solid #282424;
 }
 
-.left-col{
-    width: 18% !important;
+.left-col {
+    width: 18%; /* Consider using flexbox for better responsiveness */
 }
 
-.justify-col-content{
+.justify-col-content {
     display: grid;
     justify-content: center;
     text-align: center;
     margin-top: 38vh;
 }
 
-.item-m-bottom-90{
+.item-m-bottom-90 {
     position: relative;
     bottom: 90%;
 }
 
-.item-m-bottom-70{
+.item-m-bottom-70 {
     position: relative;
     bottom: 178%;
 }
 
-.col-item{
+.col-item {
     cursor: default;
 }
 
@@ -73,23 +73,21 @@
     color: #b38867;
 }
 
-
-#callCols{
+#callCols {
     gap: 60%;
 }
 
-.videoIcon{
+.videoIcon {
     font-size: 30px;
 }
 
-.card-height{
+.card-height {
     height: 23%;
 }
-  
 
-.icon-size{
+.icon-size {
     font-size: 23px;
-    border-left:2px solid #b38867;
+    border-left: 2px solid #b38867;
 }
 
 /* Icon text */
@@ -113,36 +111,37 @@
     font-weight: bold;
 }
 
-.columns-control{
+.columns-control {
     gap: 60px;
     display: flex;
-    flex-direction: "column";
+    flex-direction: column; /* Change to column for better stacking */
 }
 
-.font-icon{
+.font-icon {
     font-size: 25px;
     cursor: default;
 }
 
-.avatar{
-    position: relative;
-    right: 8%;
+.avatar {
     margin-top: 20px;
 }
-.profileSectionNav{
+
+.profileSectionNav {
     position: relative;
     top: 520px;
 }
-#chatsCol2{ /*remove after completed */
+
+#chatsCol2 {
     display: grid;
 }
-#chatsCol3{
+
+#chatsCol3 {
     display: none;
 }
 
 /* Hover effect for video call start button */
-.startcall:hover{
-    background-color:#3e3c3c;
+.startcall:hover {
+    background-color: #3e3c3c;
 }
 
 .chat-section{
@@ -154,61 +153,101 @@
     margin: 0px;
 }
 
-#avatar{
+
+#avatar {
     position: relative;
     top: 20px;
 }
 
-.message-section{
+.message-section {
     height: 73vh;
 }
 
-.first-col-radius{
-    border-left:20%;
+.first-col-radius {
+    border-left: 20%;
 }
 
-#contactBtns{
+#contactBtns {
     position: relative;
     top: 6px;
     left: 100px;
 }
 
-#clip-icon{
+#clip-icon {
     font-size: 20px;
     position: relative;
     top: 8px;
 }
 
-#clip-icon:hover{
+#clip-icon:hover {
     color: #b38867;
 }
 
-#mic-icon{
+#mic-icon {
     font-size: 20px;
     position: relative;
-    
 }
 
-#mic-icon:hover{
+#mic-icon:hover {
     color: #b38867;
 }
 
 #replyInput {
     position: relative;
-    right: 570px;
-    width: 1200px;
-    top: 2px;
+    right: 570px; /* Center the input */
+    width: 62vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
 }
 
-input{
+input {
     color: white;
 }
 
-.cols-gap{
+.cols-gap {
     gap: 12%;
 }
 
-/* #replyInput-col{
-    width: 100%;
-} */
+/* Media queries for responsiveness */
+@media (max-width: 1000px) {
+    #chatsCol3 {
+        width: 50px;
+    }
+}
 
+@media (max-width: 600px) {
+    #chatsCol3 {
+        display: none;
+    }
+
+    .left-col {
+        width: 100%; /* Stack the left column on smaller screens */
+    }
+
+    .chat-section {
+        flex-direction: column; /* Stack chat messages vertically */
+    }
+
+    .message-section {
+        height: auto; /* Allow height to adjust based on content */
+    }
+}
+
+@media (max-width: 500px) {
+    .outerCard .card {
+        margin-top: 30%;
+        width: 70%;
+    }
+
+    .card-content {
+        width: 100%;
+    }
+
+    #replyInput {
+        width: 90%; /* Adjust input width for smaller screens */
+        right: 0; /* Center the input */
+    }
+
+    #contactBtns {
+        left: 0; /* Center buttons on smaller screens */
+    }
+}

@@ -258,13 +258,16 @@ function ChatAppPage(){
         if (user && user._id) {
             // Check if the user is already selected
             if (!searchedSelectedUsers.find(u => u._id === user._id)) {
-                setSearchedSelectedUsers(prevUsers => [...prevUsers, user]); // Add new user to the array
-                localStorage.setItem('selectedUsers', JSON.stringify([...searchedSelectedUsers, user])); // Save to localStorage
-
-                // Await the result of accessChat
+                // Use the functional form to update state and local storage
+                setSearchedSelectedUsers(prevUsers => {
+                    const updatedUsers = [...prevUsers, user]; // Create the updated array
+                    localStorage.setItem('selectedUsers', JSON.stringify(updatedUsers)); // Save to localStorage
+                    return updatedUsers; // Return the updated state
+                });
+    
+                // Now you can safely call accessChat
                 const chat = await accessChat(user._id);
                 
-                // Check if chat is valid before setting it
                 if (chat) {
                     setSelectedChat(chat); // Set the selected chat here
                     console.log("Selected chat:", chat);
@@ -285,7 +288,7 @@ function ChatAppPage(){
     const handleSingleSelectedUser = async (user) => {
         if (user && user._id) {
             // Set the selected user directly, overwriting any previous selection
-            setSingleSelectedUser (user); // Store the selected user
+            setSingleSelectedUser(user); // Store the selected user
     
             // Save to localStorage
             localStorage.setItem('singleSelectedUser ', JSON.stringify(user));
@@ -515,7 +518,7 @@ function ChatAppPage(){
                                                             {searchedSelectedUsers.map(user => (
                                                                 <div key={user._id} className="chat-card selected-card-style"
                                                                 onClick={() => {
-                                                                    handleSingleSelectedUser (user);
+                                                                    handleSingleSelectedUser(user);
                                                                     showSelectedUserChats();
                                                                 }}>
                                                                     <div className="chat-header">
@@ -617,7 +620,7 @@ function ChatAppPage(){
                                                                     style={{ display: 'none' }} // Hide the input
                                                                 />
                                                             </div>
-                                                            <div className="column " id="replyInput-col">
+                                                            <div className="column" id="replyInput-col">
                                                                 <input type="text" id="replyInput" style={{ backgroundColor: '#202020' }}
                                                                 placeholder="Type a response" 
                                                                 value={newMessage} onKeyDown={sendMessage} onChange={typingHandler}/>

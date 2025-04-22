@@ -10,11 +10,6 @@ const ScrollableChats = ({ messages }) => {
         return url.match(/\.(jpeg|jpg|gif|png|svg)$/) != null;
     };
 
-    // Function to check if a string is a valid document URL
-    const isDocumentUrl = (url) => {
-        return url.match(/\.(pdf|doc|docx|ppt|pptx|xls|xlsx|txt)$/) != null;
-    };
-
     return (
         <InfiniteScroll
             dataLength={messages.length} // Length of the messages array
@@ -39,11 +34,7 @@ const ScrollableChats = ({ messages }) => {
             }}>
                  {isImageUrl(m.content) ? (
                     <img src={m.content} alt="Uploaded" style={{ maxWidth: '100%', borderRadius: '10px' }} />
-                ) : isDocumentUrl(m.content) ? (
-                    <a href={m.content} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                        {m.content.split('/').pop()} {/* Display the document name */}
-                    </a>
-                ) : (
+                ): (
                     m.content
                 )}
             </span>
