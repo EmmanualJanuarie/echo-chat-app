@@ -207,10 +207,14 @@ input {
     gap: 12%;
 }
 
+#videoCallBtn{
+    width: 35%;
+}
+
 /* Media queries for responsiveness */
-@media (max-width: 1000px) {
+@media (max-width: 2000px) {
     #chatsCol3 {
-        width: 50px;
+        display: none;
     }
 }
 

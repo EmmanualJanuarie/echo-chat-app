@@ -224,4 +224,27 @@
   color: white;
 }
 
+/* Media queries for responsiveness */
+@media (max-width: 1900px) {
+  #chatsCol3,  #chatsCol2,  #chatsCol1, #sideNavBar,
+   #chatsCol1, #chatsCol2, #callCol1, #callCol2, #statusCol1, #statusCol2,
+   .logo-size, header, #mainContent{
+      display: none !important;
+  }
+}
+
+@media (max-width: 1900px) {
+ 
+  body{
+    background-image: url('../src/assets/not_supported_device.png');
+    background-size: cover;
+    background-position: center; 
+    background-repeat: no-repeat; 
+    overflow-x: hidden; 
+    overflow-y: hidden;
+    height: 100%;
+  }
+}
+
+
 

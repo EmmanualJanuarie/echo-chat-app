@@ -8,6 +8,7 @@ import '../styles/ChatAppPage.css';
 import SearchBar from "../components/chatPageComponents/SearchBar";
 import StatusCard from "../components/StatusCard";
 import Avatar from "../components/chatPageComponents/Avatar";
+import { io } from 'socket.io-client';
 
 // Importing Modals
 import NewCallModal from "../components/modals/NewCallModal";
@@ -25,9 +26,15 @@ import UserItems from "../components/UserContext/UserItems";
 import { getSender , getSenderFull} from "../utils/chatSender.js";
 import '../styles/selectedUser.css';
 
+
 import Clip from "../components/chatPageComponents/Clip";
 
 function ChatAppPage(){
+
+    // Initialize the socket connection
+    const socket = io('http://localhost:5000', {
+        transports: ['websocket', 'polling']
+    });
 
     // FOR POP UP CARD
     const showPopUpMessage = (content, color, position) => {
@@ -43,7 +50,7 @@ function ChatAppPage(){
     const [showPopUp, setShowPopUp] = useState(false);
     const [popUpColor, setPopUpColor] = useState('');
 
-    const [selectedUsers, setSelectedUsers] = useState([]); // State to track selected user
+    const [selectedUser, setSelectedUser] = useState(null); // State to track selected user
     const [singleSelectedUser, setSingleSelectedUser] = useState(null); // State to track selected user
     const [searchedSelectedUsers, setSearchedSelectedUsers] = useState([]); // State to track selected user
 
@@ -90,29 +97,37 @@ function ChatAppPage(){
             }
         };
 
+    // Fetch messages whenever the selected chat changes
+    useEffect(() => {
+        fetchMessages();
+    }, [selectedChat]);
+
     // function to fetch messages
-     const fetchMessages = async (event) =>{
-            if(!selectedChat) return;
-    
+    const fetchMessages = async () => {
+        if (!selectedChat){
+            return;
+        }else{
             try {
                 const config = {
                     headers: {
-                      Authorization: `Bearer ${user.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
-                }; 
-    
-                  setLoading(true);
-                  const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, 
-                    config);
-    
-                console.log(messages);
-                
+                };
+        
+                setLoading(true);
+                const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, config);
+                console.log("Fetched messages:", data); // Log the fetched messages
                 setMessages(data);
                 setLoading(false);
             } catch (error) {
+                console.error("Error fetching messages:", error);
                 showPopUpMessage("Failed to load message", "yellow");
+                setLoading(false);
             }
-        }
+        };
+    
+        
+    };
     
     // Function to handle message sending
     const sendMessage = async (event) => {
@@ -187,32 +202,32 @@ function ChatAppPage(){
     // function to access the chat of serached user:
     const accessChat = async (userId) => {
         if (!user || !user.token) {
-            showPopUpMessage('User is not authenticated!', 'red');
-          return;
+            showPopUpMessage('User  is not authenticated!', 'red');
+            return;
         }
     
         try {
-          const config = {
-            headers: {
-              "Content-type": "application/json",
-              Authorization: `Bearer ${user.token}`,
-            },
-          };
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
     
-          const { data } = await axios.post('http://localhost:5000/api/chat', { userId }, config);
+            const { data } = await axios.post('http://localhost:5000/api/chat', { userId }, config);
     
-          if (!chats.find((c) => c._id === data._id)) {
-            setChats((prevChats) => [data, ...prevChats]);
-          } else {
-            console.log("Chat already exists in the state");
-          }
-
-          return data;
+            // Check if the chat already exists in the state
+            if (!chats.find((c) => c._id === data._id)) {
+                setChats((prevChats) => [data, ...prevChats]); // Update chats state
+            }
+    
+            return data; // Return the chat data
         } catch (error) {
-            showPopUpMessage('Failed to access chat!', 'red');
+            console.error("Error accessing chat:", error.response ? error.response.data : error.message);
+            showPopUpMessage('Failed to access selected user(s) chat!', 'red');
+            return null; // Return null if there's an error
         }
-      };
-
+    };
     
     // Function to post Image
     const postImage = async (pics) => {
@@ -265,16 +280,6 @@ function ChatAppPage(){
                     return updatedUsers; // Return the updated state
                 });
     
-                // Now you can safely call accessChat
-                const chat = await accessChat(user._id);
-                
-                if (chat) {
-                    setSelectedChat(chat); // Set the selected chat here
-                    console.log("Selected chat:", chat);
-                } else {
-                    console.error("Failed to access chat");
-                    showPopUpMessage("Failed to access chat!", "red");
-                }
             } else {
                 showPopUpMessage('User  already selected!', 'yellow');
             }
@@ -285,29 +290,33 @@ function ChatAppPage(){
 
 
     // function to handle user select when serached
-    const handleSingleSelectedUser = async (user) => {
+    const handleSingleSelectedUser  = async (user) => {
         if (user && user._id) {
+            console.log("Selected user:", user); // Log the selected user
+    
             // Set the selected user directly, overwriting any previous selection
-            setSingleSelectedUser(user); // Store the selected user
+            setSingleSelectedUser (user); // Store the selected user
     
             // Save to localStorage
             localStorage.setItem('singleSelectedUser ', JSON.stringify(user));
     
             // Await the result of accessChat
             const chat = await accessChat(user._id);
-            
+            console.log("Chat returned from accessChat:", chat); // Log the chat returned
+    
             // Check if chat is valid before setting it
             if (chat) {
                 setSelectedChat(chat); // Set the selected chat here
+                fetchMessages()
                 console.log("Selected chat:", chat);
             } else {
-                console.error("Failed to access chat");
+                console.error("Failed to access selected user's chat");
                 showPopUpMessage("Failed to access chat!", "red");
             }
         } else {
             showPopUpMessage('Invalid user selected!', 'red');
         }
-    }
+    };
 
     const [activeSection, setActiveSection] = useState("chats"); 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -355,6 +364,17 @@ function ChatAppPage(){
             console.error("Element with ID 'statusCol1' not found.");
         }
     };
+
+    // Listen for incoming messages
+    useEffect(() => {
+        socket.on('receiveMessage', (newMessage) => {
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        });
+
+        return () => {
+            socket.off('receiveMessage'); // Clean up the listener on unmount
+        };
+    }, []);
 
     useEffect(() => {
         const callCol1 = document.getElementById('callCol1');
@@ -428,10 +448,6 @@ function ChatAppPage(){
         setIsSettingsModalOpen(true); // Open the modal
     };
 
-    useEffect(()=>{
-        fetchMessages();
-    }, [selectedChat])
-
     return(
         <div>
         {/* Header section */}
@@ -478,7 +494,7 @@ function ChatAppPage(){
 
 
             {/* Main content area */}
-            <div className="column">
+            <div className="column" id="mainContent">
                 <Card borderRadius={"0px"} backgroundColor={"#202020"} height={"100vh"}>
                     <div className="columns" style={{ backgroundColor: "#2c2c2c", height: "100vh", borderRadius: "1%" }}>
                         {activeSection === "chats" && (
@@ -520,6 +536,7 @@ function ChatAppPage(){
                                                                 onClick={() => {
                                                                     handleSingleSelectedUser(user);
                                                                     showSelectedUserChats();
+                                                                    
                                                                 }}>
                                                                     <div className="chat-header">
                                                                         <img src={user?.pic} alt="User  Avatar" className="avatar" />
@@ -558,7 +575,7 @@ function ChatAppPage(){
                                                                 <div className='chats-image-container'>
                                                                 {singleSelectedUser  && (
                                                                     <img className='chats-image'
-                                                                        src={singleSelectedUser?.pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
+                                                                        src={singleSelectedUser.pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} 
                                                                         alt="Avatar" 
                                                                     />
                                                                 )}
@@ -573,8 +590,7 @@ function ChatAppPage(){
                                                             )}
                                                         </div>
                                                         <div className="column" id="contactBtns">
-                                                            <button className="button"><i class="fa-solid fa-video"></i></button>
-                                                            <button className="button"><i class="fa-solid fa-phone"></i></button>
+                                                            <button className="button" id="videoCallBtn" onClick={showCalls}><i class="fa-solid fa-video"></i></button>
                                                         </div>
                                                     </div>
                                                     </div>
@@ -664,7 +680,7 @@ function ChatAppPage(){
                                 {isModalOpen && <NewCallModal onClose={closeModal} />}
 
                                 <div className="column justify-col-content" id="callCol2">
-                                    <div className="card card-height startcall">
+                                    <div className="card card-height startcall" onClick={toggleNewCall}>
                                         <i className="fa-solid fa-video videoIcon"></i>
                                     </div>
                                     <p className="item-m-bottom-90">Start Call</p>

@@ -36,6 +36,6 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
   return await compare(enteredPassword, this.password);
 };
 
-const User = model('User', userSchema);
+const User = model('User ', userSchema);
 
-export default  User;
+export default User;
