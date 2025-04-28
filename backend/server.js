@@ -18,7 +18,7 @@ const app = express();
 const server = http.createServer(app); // Create an HTTP server
 
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: process.env.CLIENT_URL, // Allow only this origin 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
@@ -37,8 +37,6 @@ import './models/chatModel.js';
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use("/api/message", messageRoutes);
-
-
 
 // Error Handling middlewares
 app.use(notFound);

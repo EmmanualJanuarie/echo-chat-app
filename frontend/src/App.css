@@ -225,15 +225,16 @@
 }
 
 /* Media queries for responsiveness */
-@media (max-width: 1300px) {
+
+@media (max-width: 1600px) {
   #chatsCol3,  #chatsCol2,  #chatsCol1, #sideNavBar,
    #chatsCol1, #chatsCol2, #callCol1, #callCol2, #statusCol1, #statusCol2,
-   .logo-size, header, #mainContent{
+   .logo-size, header, #mainContent, #signupForm, #signinForm{
       display: none !important;
   }
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1600px) {
  
   body{
     background-image: url('../src/assets/not_supported_device.png');
