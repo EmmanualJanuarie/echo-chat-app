@@ -53,7 +53,7 @@ const UserProfile = () =>{
             const local_email = localStorage.getItem("userEmail");
             const { data } = await axios.put(
                 
-                `http://localhost:5000/api/user/${local_email}`, // Update this URL as needed
+                `https://echo-chat-app-bk.onrender.com/api/user/${local_email}`, // Update this URL as needed
                 {
                     bio,
                     flname,

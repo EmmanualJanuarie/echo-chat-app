@@ -51,7 +51,7 @@ function ResetPassword(){
             };
             
             const { data } = await axios.put(
-                `http://localhost:5000/api/user/${email}/reset-password`, // Updated URL
+                `https://echo-chat-app-bk.onrender.com/api/user/${email}/reset-password`, // Updated URL
                 {
                     password,
                 },

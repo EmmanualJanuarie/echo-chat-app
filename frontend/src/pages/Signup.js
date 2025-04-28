@@ -57,7 +57,7 @@ const SignUp = () => {
                     },
                 };
                 const { data } = await axios.post(
-                    'http://localhost:5000/api/user', // Update this URL as needed
+                    'https://echo-chat-app-bk.onrender.com/api/user', // Update this URL as needed
                     {
                         flname: 'default name',
                         email,

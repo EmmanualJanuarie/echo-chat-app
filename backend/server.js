@@ -45,7 +45,7 @@ app.use(errorHandler);
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000", //matches client url
+         origin: process.env.CLIENT_URL, //matches client url
         methods: ["GET", "POST"],
         credentials: true,
     },
