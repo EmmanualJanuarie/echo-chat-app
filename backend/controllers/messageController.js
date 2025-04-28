@@ -1,23 +1,33 @@
 import asyncHandler from "express-async-handler";
 import Message from "../models/messageModel.js";
 import Chat from "../models/chatModel.js"; // Correctly import the Chat model
-import User from "../models/userModel.js";
 
 //@description     Get all Messages
 //@route           GET /api/Message/:chatId
 //@access          Protected
 console.log("Message model:", Message); // Should log the model function
 const allMessages = asyncHandler(async (req, res) => {
+  console.log("Fetching messages for chatId:", req.params.chatId);
   try {
-    const messages = await Message.find({ chat: req.params.chatId }) // Call find directly on Message
+    const messages = await Message.find({ chat: req.params.chatId })
       .populate("sender", "name pic email")
-      .populate("chat");
+      .populate("chat")
+      .populate({
+        path: "chat.users",
+        select: "name pic email",
+      });
+    
+    console.log("Fetched messages:", messages); // Check the messages
+
     res.json(messages);
   } catch (error) {
+    console.error("Error fetching messages:", error.message);
     res.status(400);
     throw new Error(error.message);
   }
 });
+
+
 
 //@description     Create New Message
 //@route           POST /api/Message/
@@ -37,17 +47,17 @@ const sendMessage = asyncHandler(async (req, res) => {
   };
 
   try {
-    let message = await Message.create(newMessage); // Create the message
+    let message = await Message.create(newMessage);
 
-    // Populate the message with sender and chat details
     message = await message.populate("sender", "name pic");
     message = await message.populate("chat");
-    message = await User.populate(message, {
+
+     // If you want to populate the chat users, you can do this:
+     message = await message.populate({
       path: "chat.users",
-      select: "name pic email",
+      select: "name pic email", // Select only necessary fields
     });
 
-    // Update the latest message in the chat
     await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
 
     res.json(message);

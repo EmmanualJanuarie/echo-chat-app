@@ -18,7 +18,10 @@
 /* Changing width of username */
 #fulname {
     position: absolute;
-    width: 100%; /* Use 100% to allow it to scale */
+    width: 200%; /* Use 100% to allow it to scale */
+    top: 20px;
+    font-size: 22px;
+
 }
 
 #activeTime {

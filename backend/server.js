@@ -8,14 +8,17 @@ import messageRoutes from './routes/messageRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import http from 'http'; // Import http module
 import { Server } from "socket.io";
+import mongoose from "mongoose";
 
 config();
+
+console.log("Mongoose models:", mongoose.models);
 
 const app = express();
 const server = http.createServer(app); // Create an HTTP server
 
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow only this origin 
+    origin: process.env.CLIENT_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
@@ -27,9 +30,15 @@ app.get("/", (req, res) => {
     res.send("Api Active...");
 });
 
+import './models/userModel.js';
+import './models/messageModel.js';
+import './models/chatModel.js';
+
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use("/api/message", messageRoutes);
+
+
 
 // Error Handling middlewares
 app.use(notFound);
@@ -64,20 +73,22 @@ io.on("connection", (socket) => {
     socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
     socket.on("new message", (newMessageReceived) => {
-        var chat = newMessageReceived.chat;
-
-        if (!chat.users) return console.log("chat.users not defined");
-
-        chat.users.forEach((user) => {
-            if (user._id == newMessageReceived.sender._id) return;
-
-            socket.in(user._id).emit("message received", newMessageReceived);
-        });
+        try {
+            var chat = newMessageReceived.chat;
+            if (!chat.users) return console.log("chat.users not defined");
+            chat.users.forEach((user) => {
+                if (user._id == newMessageReceived.sender._id) return;
+                socket.in(user._id).emit("message received", newMessageReceived);
+            });
+        } catch (error) {
+            console.error("Error in new message event:", error.message);
+        }
     });
 
-    socket.on("disconnect", () => {
+    socket.off("setup", () => {
         console.log("USER DISCONNECTED");
-    });
+        socket.leave(userData._id);
+      });
 });
 
 // Start the server

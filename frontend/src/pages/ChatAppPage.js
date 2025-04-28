@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Card from "../components/chatPageComponents/Card";
 import echoLogo_black from '../assets/echo_text_logo_black.png'; 
 import echoLogo_white from '../assets/echo_text_logo_white.png'; 
@@ -23,16 +23,11 @@ import '../styles/MessageSection.css';
 
 import PopUp from "../components/PopUp";
 import UserItems from "../components/UserContext/UserItems";
-import { getSender , getSenderFull} from "../utils/chatSender.js";
 import '../styles/selectedUser.css';
-
-var selectedChatCompare
 
 function ChatAppPage(){
 
-    // Initialize the socket connection
-    const socket = io('http://localhost:5000');
-
+    const socket = useRef(null);
     // FOR POP UP CARD
     const showPopUpMessage = (content, color, position) => {
         setPopUpContent(content);
@@ -51,11 +46,32 @@ function ChatAppPage(){
     const [singleSelectedUser, setSingleSelectedUser] = useState(null); // State to track selected user
     const [searchedSelectedUsers, setSearchedSelectedUsers] = useState([]); // State to track selected user
 
-
     const [loggedUser, setLoggedUser] = useState('');
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState();
+
+
+    const playSound = () => {
+        const audio = new Audio(require('../assets/chatNotification_sound.mp3')); // Adjust the path as necessary
+        audio.play();
+    };
+
+    // Initialize socket connection when the component mounts
+    useEffect(() => {
+        if (!socket.current) {
+        // Initialize socket connection once when component mounts
+        socket.current = io("http://localhost:5000"); // Change URL to your server's URL if needed
+        }
+    
+        return () => {
+        if (socket.current) {
+            socket.current.disconnect();  // Clean up and disconnect the socket when component unmounts
+        }
+        };
+    }, []);
+
+    
 
     // chatstate
     const { user, chats, setChats, selectedChat,setSelectedChat } = ChatState();
@@ -102,30 +118,44 @@ function ChatAppPage(){
             console.log("No selected chat.");
             return;
         }
-
+    
         try {
             const config = {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },
             };
-
+    
             console.log("Fetching messages for chat ID:", selectedChat._id);
             console.log("Using token:", user.token);
-
+    
             setLoading(true);
-            const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, config);
+    
+            // Axios call to fetch messages
+            const { data } = await axios.get(`http://localhost:5000/api/Message/${selectedChat._id}`, config);
+    
             console.log("Fetched messages:", data); // Log the fetched messages
-            setMessages(data);
-
-            socket.emit("join chat", selectedChat._id);
+            if (data && Array.isArray(data)) {
+                setMessages(data);
+            } else {
+                console.error("Unexpected data format:", data);
+                showPopUpMessage("Unexpected message data format", "yellow");
+            }
+    
+            // Emit the socket event only if the connection is ready
+            if (socket && socket.connected) {
+                socket.emit("join chat", selectedChat._id);
+            } else {
+                console.error("Socket is not connected");
+            }
+    
         } catch (error) {
             console.error("Error fetching messages:", error.response ? error.response.data : error.message);
-            showPopUpMessage("Failed to load message", "yellow");
-            setLoading(false);
-        } finally{
-            setLoading(false);
-        }     
+            showPopUpMessage("Failed to load messages", "yellow");
+            setLoading(false); // Ensure loading state is reset on error
+        } finally {
+            setLoading(false); // Ensure loading state is reset on completion (success or failure)
+        }
     };
     
     // Function to handle message sending
@@ -146,7 +176,7 @@ function ChatAppPage(){
                     },
                 };
     
-                const { data } = await axios.post('http://localhost:5000/api/message', {
+                const { data } = await axios.post('http://localhost:5000/api/Message', {
                     content: newMessage,
                     chatId: selectedChat._id,
                 }, config);
@@ -309,7 +339,7 @@ function ChatAppPage(){
                 setLoading(true);
 
                 //  // Fetch messages for the selected chat
-                //  await fetchMessages();
+                 await fetchMessages();
                 console.log("Selected chat:", chat);
             } else {
                 console.error("Failed to access selected user's chat");
@@ -368,37 +398,6 @@ function ChatAppPage(){
     };
 
     useEffect(() => {
-        fetchMessages();
-
-        selectedChatCompare = selectedChat;
-        // eslint-disable-next-line
-    }, [selectedChat]);
-
-
-    // Listen for incoming messages
-    useEffect(() => {
-        const handleMessageReceived = (newMessageReceived) => {
-            if (
-                !selectedChatCompare || // if chat is not selected or doesn't match current chat
-                selectedChatCompare._id !== newMessageReceived.chat._id
-            ) {
-                // Do nothing if the chat doesn't match
-            } else {
-                // Use functional update to ensure you're working with the latest messages
-                setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
-            }
-        };
-    
-        // Subscribe to the "message received" event
-        socket.on("message received", handleMessageReceived);
-    
-        // Cleanup function to unsubscribe from the event
-        return () => {
-            socket.off("message received", handleMessageReceived);
-        };
-    }, [selectedChatCompare]); // Add selectedChatCompare to the dependency array
-
-    useEffect(() => {
         const callCol1 = document.getElementById('callCol1');
         const callCol2 = document.getElementById('callCol2');
         if (callCol1) {
@@ -440,6 +439,13 @@ function ChatAppPage(){
         }
     }, [activeSection]);
 
+
+    
+     // Fetch messages whenever the selected chat changes
+     useEffect(() => {
+        fetchMessages();
+    }, [selectedChat]);
+
     // Function to close the modal
     const closeModal = () => {
         setIsModalOpen(false); // Close the modal
@@ -469,6 +475,31 @@ function ChatAppPage(){
     const toggleSettingsModal = () => {
         setIsSettingsModalOpen(true); // Open the modal
     };
+
+    // Fetch messages when selectedChat changes
+    useEffect(() => {
+        if (selectedChat) {
+        // Emit to the server to listen to this specific chat
+        socket.current.emit("joinChat", selectedChat._id); // Join a specific chat room (chatId)
+        }
+    }, [selectedChat]); // Dependency on selectedChat to change whenever the chat is selected
+    
+    // Listen for messages related to the selected chat
+    useEffect(() => {
+        if (socket.current) {
+        socket.current.on('receiveMessage', (message) => {
+            console.log('Received message:', message);
+            setMessages((prevMessages) => [...prevMessages, message]);  // Update state with new message
+            playSound(); // Play sound when a new message is received
+        });
+        }
+    
+        return () => {
+        if (socket.current) {
+            socket.current.off('receiveMessage'); // Cleanup when component unmounts
+        }
+        };
+    }, [selectedChat]); // Re-run whenever the selectedChat changes
 
     return(
         <div>
@@ -607,7 +638,6 @@ function ChatAppPage(){
                                                             {singleSelectedUser  && ( // Check if singleSelectedUser  is not null
                                                                 <div className="column">
                                                                     <p id="fulname">{singleSelectedUser.flname || "Username"}</p>
-                                                                    <p id="activeTime">Last seen</p>
                                                                 </div>
                                                             )}
                                                         </div>
@@ -623,17 +653,7 @@ function ChatAppPage(){
                                             <div className="card message-section" style={{borderRadius: '0px', backgroundColor: '#2c2c2c'}}>
                                                 {/* Message will be displayeed here */}
                                                 <div>
-                                                    
-                                                    {singleSelectedUser && loading ? (
-                                                        <Spinner />
-                                                    ): (
-                                                        <div>
-                                                            {/* Messages here */}
-                                                            <div>
-                                                                <ScrollableChats messages={messages} />
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                                     {loading ? <Spinner /> : <ScrollableChats messages={messages} />}
                                                 </div>
                                             </div>
                                         </div>

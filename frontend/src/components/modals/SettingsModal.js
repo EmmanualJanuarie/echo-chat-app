@@ -4,8 +4,22 @@ import SearchBar from '../chatPageComponents/SearchBar';
 import Card from '../chatPageComponents/Card';
 import { ChatState } from '../../Context/ChatProvider';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const SettingsModal = ({onClose}) =>{
+
+    const showPopUpMessage = (content, color, position) => {
+        setPopUpContent(content);
+        setPopUpColor(color);
+        setPopUpPosition(position);
+        setShowPopUp(true);
+        setTimeout(() => setShowPopUp(false), 4000); // Hide after 3 seconds
+    };
+
+    const [popUpContent, setPopUpContent] = useState('');
+    const [popUpPosition, setPopUpPosition] = useState('');
+    const [showPopUp, setShowPopUp] = useState(false);
+    const [popUpColor, setPopUpColor] = useState('');
 
     const navigate = useNavigate();
     const { user } = ChatState();
@@ -23,6 +37,27 @@ const SettingsModal = ({onClose}) =>{
         localStorage.removeItem("selectedUser");
         navigate('/');
     }
+
+    // Function to delete user
+    const deleteUser = async () => {
+        if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+            try {
+                const local_email = localStorage.getItem("userEmail");
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${user.token}`, // Include token if required
+                    },
+                };
+    
+                await axios.delete(`http://localhost:5000/api/user/${local_email}/delete-user`, config);
+                showPopUpMessage('User account deleted successfully!', 'green');
+                navigate("/signup"); // Redirect to signup or login page after deletion
+            } catch (error) {
+                console.error("Error deleting user:", error);
+                showPopUpMessage('Failed to delete user!', 'red');
+            }
+        }
+    };
 
     // Handle input change
     const handleInputChange = (event) => {
@@ -273,7 +308,7 @@ const SettingsModal = ({onClose}) =>{
                             <p style={{marginTop: '20px', marginBottom: '20px'}}>Once deleted, your account cannot be recovered.</p>
 
                             
-                            <button className='button is-danger'>Delete Account</button>
+                            <button className='button is-danger' onClick={deleteUser}>Delete Account</button>
                         </span>
                     </div>
                 )}

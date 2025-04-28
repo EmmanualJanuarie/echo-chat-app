@@ -85,27 +85,21 @@ const authUser = asyncHandler(async (req, res) => {
         return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    const isMatch = user.matchPassword(password); //please add 'await' removed for chat purposes
-
-    //debugging to check is passwords are the same
-    console.log("Db Password: ", user.password)
-    console.log("Entered Password: ", password)
-    console.log("Is the password match?", isMatch);
-
-    if (!isMatch) {
-        return res.status(401).json({ message: "Password does not match what's in the database" });
-    }
-
-    res.json({
-        _id: user._id,
-        flname: user.flname,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        bio: user.bio,
-        tel: user.tel,
-        pic: user.pic,
-        token: generateToken(user._id),
-    });
+    if (user && (await user.matchPassword(password))) {
+        res.json({
+            _id: user._id,
+            flname: user.flname,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            bio: user.bio,
+            tel: user.tel,
+            pic: user.pic,
+            token: generateToken(user._id),
+        });
+      } else {
+        res.status(401);
+        throw new Error("Invalid Email or Password");
+      }
 });
 
 // Search Users
@@ -168,5 +162,22 @@ const resetPassword = asyncHandler(async (req, res) => {
     res.json({ message: "Password reset successfully" });
 });
 
-export default { regUser, authUser, updateUser, searchUsers, resetPassword };
+// Delete User
+const deleteUser  = asyncHandler(async (req, res) => {
+    const { email } = req.params; // Assuming you are using email to identify the user
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        return res.status(404).json({ message: 'User  not found' });
+    }
+
+    // Delete the user
+    await user.remove();
+
+    res.json({ message: "User  deleted successfully" });
+});
+
+export default { regUser, authUser, updateUser, searchUsers, resetPassword, deleteUser };
 

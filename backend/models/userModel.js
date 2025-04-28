@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
-import { compare, genSalt, hash } from "bcryptjs";
+import bcrypt from "bcryptjs";
 
-const userSchema = new mongoose.Schema({
+// Ensure model is registered only once
+if (!mongoose.models.User) {
+  const userSchema = new mongoose.Schema({
     flname: { type: String, required: true }, // Correct
     email: { type: String, required: true, unique: true }, // Correct
     password: { type: String, required: true }, // Correct
@@ -17,24 +19,25 @@ const userSchema = new mongoose.Schema({
       required: true,
       default: false, // Correct
     },
-  },
-  { timestamps: true }
-);
+  }, { timestamps: true });
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) { // Corrected this line
-    return next(); // If password is not modified, skip hashing
-  }
+  // Password hashing middleware
+  userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+      return next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    return next();
+  });
 
-  const salt = await genSalt(10);
-  this.password = await hash(this.password, salt);
-  return next(); // Call next to proceed with saving the user
-});
+  // Password comparison method
+  userSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+  };
 
-userSchema.methods.matchPassword = async function(enteredPassword) {
-  return await compare(enteredPassword, this.password);
-};
+  // Register the model
+  mongoose.model("User", userSchema);
+}
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+export default mongoose.models.User; // Return the registered model
