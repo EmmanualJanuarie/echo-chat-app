@@ -3,48 +3,51 @@ import User from '../models/userModel.js';
 import generateToken from '../config/generateToken.js';
 import { compare, hash } from 'bcryptjs';
 
-// Creating async function for user registration
-const regUser = asyncHandler(async(req, res) =>{
-    const {flname, email, password, pic, bio, tel} = req.body;
+// User Registration
+const regUser = asyncHandler(async (req, res) => {
+    console.log("Received registration data:", req.body); // Debugging line
 
-    console.log(req.body);
+    const { flname, email, password, pic, bio, tel } = req.body;
 
-    // Throwing error if any of the  variables are undifiend
-    if(!flname || !email || !password || !bio || !tel){
+    // Basic validations
+    if (!flname || !email || !password || !bio || !tel) {
         return res.status(400).json({ message: 'Please populate all fields!' });
     }
 
-    if(email.length() > 20){
-        return res.status(400).json({ message: 'Email is greater than 20 characters' });
+    // Debugging email type and value
+    console.log("Email type before validation:", typeof email); 
+    console.log("Email value before validation:", email);
+
+    // Additional validation for email
+    if (!email || typeof email !== 'string') {
+        return res.status(400).json({ message: 'Email must be a valid string' });
     }
 
-    // Normalize email
+    if (email.length > 50) {
+        return res.status(400).json({ message: 'Email is greater than 50 characters' });
+    }
+
     const normalizedEmail = email.toLowerCase();
 
-    // Checkinf if user exists in database
-    const userExists = await User.findOne({email: normalizedEmail});
-    
-    // Display error if user exists
-    if(userExists){
-        res.status(400);
-        return res.status(400).json({ message: 'User Exists!' });
+    const userExists = await User.findOne({ email: normalizedEmail });
+
+    if (userExists) {
+        return res.status(400).json({ message: 'User already exists!' });
     }
 
-    // Hash the password before saving
     const hashedPassword = await hash(password, 10);
 
-    // the alternative if user does not exists
     const user = await User.create({
         flname,
         email: normalizedEmail,
         password: hashedPassword,
-        bio, 
+        bio,
         tel,
         pic,
     });
 
-    if(user){
-        res.status(201).json({
+    if (user) {
+        return res.status(201).json({
             _id: user._id,
             flname: user.flname,
             email: user.email,
@@ -52,82 +55,91 @@ const regUser = asyncHandler(async(req, res) =>{
             bio: user.bio,
             tel: user.tel,
             pic: user.pic,
-
-            // generating token
             token: generateToken(user._id),
         });
-    }else{
-      return res.status(400).json({ message: 'User Creation Failed!' });
+    } else {
+        return res.status(400).json({ message: 'User creation failed!' });
     }
 });
 
-const authUser  = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+// User Login (Authentication)
+const authUser = asyncHandler(async (req, res) => {
+    console.log("Login request:", req.body); // Debugging line
 
-  // Normalize email
-  const normalizedEmail = email.toLowerCase();
+    const { email, password } = req.body;
 
-  // Retrieve the user by email
-  const user = await User.findOne({ email: normalizedEmail });
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Please provide email and password' });
+    }
 
-  if (!user) {
-    return res.status(401).json({ message: "User  not found" });
-  }
+    // Additional validation for email
+    if (!email || typeof email !== 'string') {
+        return res.status(400).json({ message: 'Email must be a valid string' });
+    }
 
-  // Use the matchPassword method to compare passwords
-  const isMatch =  user.matchPassword(password); //removed 'await' for chat purposes please add it later
-  if (!isMatch) {
-    return res.status(401).json({ message: "Invalid password" });
-  }
+    const normalizedEmail = email.toLowerCase();
 
-  // If the password matches, return user details and token
-  res.json({
-    _id: user._id,
-    flname: user.flname,
-    email: user.email,
-    isAdmin: user.isAdmin,
-    bio: user.bio,
-    tel: user.tel,
-    pic: user.pic,
-    token: generateToken(user._id),
-  });
+    const user = await User.findOne({ email:  normalizedEmail });
+
+    if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = user.matchPassword(password); //please add 'await' removed for chat purposes
+
+    //debugging to check is passwords are the same
+    console.log("Db Password: ", user.password)
+    console.log("Entered Password: ", password)
+    console.log("Is the password match?", isMatch);
+
+    if (!isMatch) {
+        return res.status(401).json({ message: "Password does not match what's in the database" });
+    }
+
+    res.json({
+        _id: user._id,
+        flname: user.flname,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        bio: user.bio,
+        tel: user.tel,
+        pic: user.pic,
+        token: generateToken(user._id),
+    });
 });
 
-const searchUsers = asyncHandler(async (req, res)=>{
-    const keyword =  req.query.search 
-    ? {
-       $or : [
-        { name: { $regex: req.query.search, $options: "i"} },
-        { email: { $regex: req.query.search, $options: "i"} },
-       ] 
-    }
-    :{};
+// Search Users
+const searchUsers = asyncHandler(async (req, res) => {
+    const keyword = req.query.search
+        ? {
+            $or: [
+                { flname: { $regex: req.query.search, $options: "i" } },
+                { email: { $regex: req.query.search, $options: "i" } },
+            ]
+        }
+        : {};
 
-    const users = await User.find(keyword).find({_id:{ $ne: req.user._id }});
+    const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
     res.send(users);
 });
 
-// Creating the async function for updating user information
-const updateUser  = asyncHandler(async (req, res) => {
-    const { email } = req.params; // Get the email from the request parameters
-    const { bio, flname, pic } = req.body; // Get the fields to update from the request body
+// Update User Info
+const updateUser = asyncHandler(async (req, res) => {
+    const { email } = req.params;
+    const { bio, flname, pic } = req.body;
 
-    // Check if the user exists
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.status(404).json({ message: 'User  not found' });
+        return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user fields
-    user.bio = bio || user.bio; // Update bio if provided, otherwise keep existing
-    user.flname = flname || user.flname; // Update full name if provided
-    user.pic = pic || user.pic; // Update picture if provided
+    user.bio = bio || user.bio;
+    user.flname = flname || user.flname;
+    user.pic = pic || user.pic;
 
-    // Save the updated user
-    const updatedUser  = await user.save();
+    const updatedUser = await user.save();
 
-    // Respond with the updated user data
     res.json({
         _id: updatedUser._id,
         flname: updatedUser.flname,
@@ -138,26 +150,23 @@ const updateUser  = asyncHandler(async (req, res) => {
     });
 });
 
+// Reset Password
 const resetPassword = asyncHandler(async (req, res) => {
-    const { email } = req.params; // Get the email from the request parameters
-    const { password } = req.body; // Get the fields to update from the request body
+    const { email } = req.params;
+    const { password } = req.body;
 
-    // Check if the user exists
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.status(404).json({ message: 'User  not found' });
+        return res.status(404).json({ message: 'User not found' });
     }
 
-    // Hash the new password before saving
-    user.password = await hash(password, 10); // Hash the password with a salt round of 10
+    user.password = await hash(password, 10);
 
-    // Save the updated user
-    const resetedUserPwd = await user.save();
+    await user.save();
 
-    // Respond with the updated user data
-    res.json({
-        password: resetedUserPwd.password,
-    });
+    res.json({ message: "Password reset successfully" });
 });
-export default { regUser , authUser, updateUser, searchUsers, resetPassword } ;
+
+export default { regUser, authUser, updateUser, searchUsers, resetPassword };
+

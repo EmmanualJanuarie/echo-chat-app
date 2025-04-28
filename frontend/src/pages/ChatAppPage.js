@@ -26,15 +26,12 @@ import UserItems from "../components/UserContext/UserItems";
 import { getSender , getSenderFull} from "../utils/chatSender.js";
 import '../styles/selectedUser.css';
 
-
-import Clip from "../components/chatPageComponents/Clip";
+var selectedChatCompare
 
 function ChatAppPage(){
 
     // Initialize the socket connection
-    const socket = io('http://localhost:5000', {
-        transports: ['websocket', 'polling']
-    });
+    const socket = io('http://localhost:5000');
 
     // FOR POP UP CARD
     const showPopUpMessage = (content, color, position) => {
@@ -98,35 +95,37 @@ function ChatAppPage(){
         };
 
     // Fetch messages whenever the selected chat changes
-    useEffect(() => {
-        fetchMessages();
-    }, [selectedChat]);
-
+   
     // function to fetch messages
     const fetchMessages = async () => {
-        if (!selectedChat){
+        if (!selectedChat) {
+            console.log("No selected chat.");
             return;
-        }else{
-            try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                };
-        
-                setLoading(true);
-                const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, config);
-                console.log("Fetched messages:", data); // Log the fetched messages
-                setMessages(data);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching messages:", error);
-                showPopUpMessage("Failed to load message", "yellow");
-                setLoading(false);
-            }
-        };
-    
-        
+        }
+
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+
+            console.log("Fetching messages for chat ID:", selectedChat._id);
+            console.log("Using token:", user.token);
+
+            setLoading(true);
+            const { data } = await axios.get(`http://localhost:5000/api/message/${selectedChat._id}`, config);
+            console.log("Fetched messages:", data); // Log the fetched messages
+            setMessages(data);
+
+            socket.emit("join chat", selectedChat._id);
+        } catch (error) {
+            console.error("Error fetching messages:", error.response ? error.response.data : error.message);
+            showPopUpMessage("Failed to load message", "yellow");
+            setLoading(false);
+        } finally{
+            setLoading(false);
+        }     
     };
     
     // Function to handle message sending
@@ -220,7 +219,7 @@ function ChatAppPage(){
             if (!chats.find((c) => c._id === data._id)) {
                 setChats((prevChats) => [data, ...prevChats]); // Update chats state
             }
-    
+
             return data; // Return the chat data
         } catch (error) {
             console.error("Error accessing chat:", error.response ? error.response.data : error.message);
@@ -290,28 +289,31 @@ function ChatAppPage(){
 
 
     // function to handle user select when serached
-    const handleSingleSelectedUser  = async (user) => {
-        if (user && user._id) {
-            console.log("Selected user:", user); // Log the selected user
+    const handleSingleSelectedUser  = async (selecteduser) => {
+        if (selecteduser && selecteduser._id) {
+            console.log("Selected user:", selecteduser); // Log the selected user
     
             // Set the selected user directly, overwriting any previous selection
-            setSingleSelectedUser (user); // Store the selected user
+            setSingleSelectedUser(selecteduser); // Store the selected user
     
             // Save to localStorage
-            localStorage.setItem('singleSelectedUser ', JSON.stringify(user));
+            localStorage.setItem('singleSelectedUser', JSON.stringify(selecteduser));
     
             // Await the result of accessChat
-            const chat = await accessChat(user._id);
+            const chat = await accessChat(selecteduser._id);
             console.log("Chat returned from accessChat:", chat); // Log the chat returned
     
             // Check if chat is valid before setting it
             if (chat) {
                 setSelectedChat(chat); // Set the selected chat here
-                fetchMessages()
+                setLoading(true);
+
+                //  // Fetch messages for the selected chat
+                //  await fetchMessages();
                 console.log("Selected chat:", chat);
             } else {
                 console.error("Failed to access selected user's chat");
-                showPopUpMessage("Failed to access chat!", "red");
+                showPopUpMessage("Failed to access selected user's chat!", "red");
             }
         } else {
             showPopUpMessage('Invalid user selected!', 'red');
@@ -365,16 +367,36 @@ function ChatAppPage(){
         }
     };
 
+    useEffect(() => {
+        fetchMessages();
+
+        selectedChatCompare = selectedChat;
+        // eslint-disable-next-line
+    }, [selectedChat]);
+
+
     // Listen for incoming messages
     useEffect(() => {
-        socket.on('receiveMessage', (newMessage) => {
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-        });
-
-        return () => {
-            socket.off('receiveMessage'); // Clean up the listener on unmount
+        const handleMessageReceived = (newMessageReceived) => {
+            if (
+                !selectedChatCompare || // if chat is not selected or doesn't match current chat
+                selectedChatCompare._id !== newMessageReceived.chat._id
+            ) {
+                // Do nothing if the chat doesn't match
+            } else {
+                // Use functional update to ensure you're working with the latest messages
+                setMessages((prevMessages) => [...prevMessages, newMessageReceived]);
+            }
         };
-    }, []);
+    
+        // Subscribe to the "message received" event
+        socket.on("message received", handleMessageReceived);
+    
+        // Cleanup function to unsubscribe from the event
+        return () => {
+            socket.off("message received", handleMessageReceived);
+        };
+    }, [selectedChatCompare]); // Add selectedChatCompare to the dependency array
 
     useEffect(() => {
         const callCol1 = document.getElementById('callCol1');

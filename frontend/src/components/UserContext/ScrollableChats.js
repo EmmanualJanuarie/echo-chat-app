@@ -9,9 +9,6 @@ const ScrollableChats = ({ messages }) => {
     const isImageUrl = (url) => {
         return url.match(/\.(jpeg|jpg|gif|png|svg)$/) != null;
     };
-
-    console.log("Messages:", messages); // Debugging output
-
     return (
             <InfiniteScroll
             dataLength={messages.length}

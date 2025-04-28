@@ -47,7 +47,7 @@ const SignUp = () => {
 
         console.log(tel, email, password, pic);
 
-        if(email.length > 20){
+        if(!email.length > 20){
             showPopUpMessage('Email must be less than 20 Characters!', 'yellow', 'absolute');
         }else{
             try {

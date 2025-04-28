@@ -7,7 +7,7 @@ import chatRoutes from './routes/chatRoutes.js';
 import messageRoutes from './routes/messageRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import http from 'http'; // Import http module
-import Server from 'socket.io-client'; // Import Server from socket.io
+import { Server } from "socket.io";
 
 config();
 
@@ -38,7 +38,9 @@ app.use(errorHandler);
 // Initialize Socket.IO with the HTTP server
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5000",
+        origin: "http://localhost:3000", //matches client url
+        methods: ["GET", "POST"],
+        credentials: true,
     },
 });
 

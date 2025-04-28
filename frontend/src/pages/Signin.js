@@ -80,6 +80,7 @@ return (
                 {/* Header component */}
                 <HeaderText content={'Sign In'} fontSize={'40px'} color={'black'} marginBottom={'20px'} />
 
+                <form onSubmit={submitHandler}>
                     {/* Input for Email */}
                     <Input backgroundColor={'white'}
                         input={{
@@ -112,9 +113,9 @@ return (
                         }}
                     />
 
-                    <Button type={'submit'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Sign In'} 
-                        onClick={submitHandler}
-                    />
+                    <Button type={'submit'} backgroundColor={'black'} width={'100%'} color={'white'} content={'Sign In'}  />
+
+                </form> 
                 
                     <DirectionMsg content={"Don't have an account?"} toMsg={
                         <Link to="/signup" style={{ textDecoration: 'none', color: 'black' }}>Sign Up</Link>

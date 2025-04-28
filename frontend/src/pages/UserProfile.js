@@ -5,6 +5,7 @@ import Input from '../components/Input';
 import FormCard from '../components/FormCard';
 import Button from '../components/Button';
 import Avatar from '../components/chatPageComponents/Avatar';
+import EditAvatar from '../components/chatPageComponents/EditAvatar';
 import ArrowButton from '../components/ArrowButton';
 import PopUp from '../components/PopUp';
 import axios from 'axios';
@@ -119,7 +120,7 @@ const UserProfile = () =>{
                 <ArrowButton linkComp={'/signup'}/>
 
                 <form onSubmit={submitHandler}>
-                <Avatar src={pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} alt={'Default avatar image'}
+                <EditAvatar src={pic || 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'} alt={'Default avatar image'}
                         textAlign={'left'}  
                         height={'100px'} width={'100px'} borderRadius={'50%'} border={'2px solid gray'}
                         objectFit={'cover'} backgroundColor={'white'} marginBottom={'30px'}
