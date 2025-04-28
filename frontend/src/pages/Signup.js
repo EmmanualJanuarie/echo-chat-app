@@ -12,6 +12,9 @@ import axios from 'axios';
 import PopUp from '../components/PopUp';
 
 const SignUp = () => {
+
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -57,7 +60,7 @@ const SignUp = () => {
                     },
                 };
                 const { data } = await axios.post(
-                    'https://echo-chat-app-bk.onrender.com/api/user', // Update this URL as needed
+                    `${API_URL}/api/user`, // Update this URL as needed
                     {
                         flname: 'default name',
                         email,

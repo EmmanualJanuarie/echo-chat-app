@@ -12,6 +12,7 @@ import '../styles/FormCard.css';
 import '../App.css';
 
 function ResetPassword(){
+    const API_URL = process.env.REACT_APP_API_URL;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
@@ -51,7 +52,7 @@ function ResetPassword(){
             };
             
             const { data } = await axios.put(
-                `https://echo-chat-app-bk.onrender.com/api/user/${email}/reset-password`, // Updated URL
+                `${API_URL}/api/user/${email}/reset-password`, // Updated URL
                 {
                     password,
                 },

@@ -8,6 +8,8 @@ import axios from 'axios';
 
 const SettingsModal = ({onClose}) =>{
 
+    const API_URL = process.env.REACT_APP_API_URL;
+
     const showPopUpMessage = (content, color, position) => {
         setPopUpContent(content);
         setPopUpColor(color);
@@ -49,7 +51,7 @@ const SettingsModal = ({onClose}) =>{
                     },
                 };
     
-                await axios.delete(`https://echo-chat-app-bk.onrender.com/api/user/${local_email}/delete-user`, config);
+                await axios.delete(`${API_URL}/api/user/${local_email}/delete-user`, config);
                 showPopUpMessage('User account deleted successfully!', 'green');
                 navigate("/signup"); // Redirect to signup or login page after deletion
             } catch (error) {

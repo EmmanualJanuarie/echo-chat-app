@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 const UserProfile = () =>{
+    const API_URL = process.env.REACT_APP_API_URL;
+    
     const [flname, setFlname] = useState('');
     const [bio, setBio] = useState('');
     const [pic, setPic] = useState('');
@@ -53,7 +55,7 @@ const UserProfile = () =>{
             const local_email = localStorage.getItem("userEmail");
             const { data } = await axios.put(
                 
-                `https://echo-chat-app-bk.onrender.com/api/user/${local_email}`, // Update this URL as needed
+                `${API_URL}/api/user/${local_email}`, // Update this URL as needed
                 {
                     bio,
                     flname,

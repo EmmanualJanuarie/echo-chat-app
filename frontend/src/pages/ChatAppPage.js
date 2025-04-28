@@ -26,6 +26,7 @@ import UserItems from "../components/UserContext/UserItems";
 import '../styles/selectedUser.css';
 
 function ChatAppPage(){
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const socket = useRef(null);
     // FOR POP UP CARD
@@ -61,7 +62,7 @@ function ChatAppPage(){
     useEffect(() => {
         if (!socket.current) {
         // Initialize socket connection once when component mounts
-        socket.current = io("https://echo-chat-app-bk.onrender.com"); // Change URL to your server's URL if needed
+        socket.current = io(API_URL); // Change URL to your server's URL if needed
         }
     
         return () => {
@@ -100,7 +101,7 @@ function ChatAppPage(){
                     },
                 };
     
-                const { data } = await axios.get(`https://echo-chat-app-bk.onrender.com/api/user?search=${query}`, config);
+                const { data } = await axios.get(`${API_URL}/api/user?search=${query}`, config);
                 console.log(data);
                 setSearchActive(true); // Set search active to true when searching
                 setSearchResult(data);
@@ -132,7 +133,7 @@ function ChatAppPage(){
             setLoading(true);
     
             // Axios call to fetch messages
-            const { data } = await axios.get(`https://echo-chat-app-bk.onrender.com/api/Message/${selectedChat._id}`, config);
+            const { data } = await axios.get(`${API_URL}/api/Message/${selectedChat._id}`, config);
     
             console.log("Fetched messages:", data); // Log the fetched messages
             if (data && Array.isArray(data)) {
@@ -176,7 +177,7 @@ function ChatAppPage(){
                     },
                 };
     
-                const { data } = await axios.post('https://echo-chat-app-bk.onrender.com/api/Message', {
+                const { data } = await axios.post(`${API_URL}/api/Message`, {
                     content: newMessage,
                     chatId: selectedChat._id,
                 }, config);
@@ -243,7 +244,7 @@ function ChatAppPage(){
                 },
             };
     
-            const { data } = await axios.post('https://echo-chat-app-bk.onrender.com/api/chat', { userId }, config);
+            const { data } = await axios.post(`${API_URL}/api/chat`, { userId }, config);
     
             // Check if the chat already exists in the state
             if (!chats.find((c) => c._id === data._id)) {
