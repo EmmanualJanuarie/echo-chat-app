@@ -366,7 +366,6 @@
   }
 }
 
-@media (max-width: 1600px) {
 @media (max-width: 1300px) {
   #chatsCol3,  #chatsCol2,  #chatsCol1, #sideNavBar,
    #chatsCol1, #chatsCol2, #callCol1, #callCol2, #statusCol1, #statusCol2,
@@ -374,9 +373,7 @@
   }
 }
 
-@media (max-width: 1600px) {
 @media (max-width: 1300px) {
- 
   body{
     background-image: url('../src/assets/not_supported_device.png');
     overflow-x: hidden; 
