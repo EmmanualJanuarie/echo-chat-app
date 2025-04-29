@@ -531,7 +531,7 @@ function ChatAppPage(){
                                 <i className="fa-solid fa-panorama"></i>
                             </div>
 
-                            <div className="profileSectionNav">
+                            <div className="profileSectionNav" id="profileNav">
                                 <div className="font-icon">
                                     <i className="fa-solid fa-gear" onClick={toggleSettingsModal}></i>
                                 </div>
@@ -707,7 +707,7 @@ function ChatAppPage(){
                                                 <p>Calls</p>
                                             </span>
                                         </div>
-                                        <div className="column">
+                                        <div className="column" id="newCall">
                                             <div className="col-item" onClick={toggleNewCall}>
                                                 <i className="fa-solid fa-phone"></i>
                                                 <i className="fa-solid fa-plus"></i>
