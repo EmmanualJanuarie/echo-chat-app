@@ -201,7 +201,7 @@ const SettingsModal = ({onClose}) =>{
     return(
         <div>
             <div className='columns modal-size modal-card-pos' id='settings'>
-                <div className='column border-right is-two-fifths col1-radius' style={{backgroundColor: "#292929"}}>
+                <div className='column border-right is-two-fifths col1-radius' style={{backgroundColor: "#292929"}} id='sidebar_col>
                     <div className='columns' style={{textAlign: 'center'}}>
                         <div className='column'>
                             <div className='settings-card bottom-20' onClick={showProfile}>
