@@ -33,7 +33,7 @@ const UserItems = ({user, handleFunction, selected}) =>{
                 </Column>
 
                 <Column>
-                  <div style={{textAlign: 'right'}}> 
+                  <div style={{textAlign: 'right'}} id="userDetails"> 
                   <Heading content={user.flname || 'Unknown User'} fontSize={'15px'} color={'gray'} fontWeight={'bold'}
                       textAlign={'left'}  
                   />
