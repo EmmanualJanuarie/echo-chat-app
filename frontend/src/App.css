@@ -226,6 +226,724 @@
 
 
 /* Media queries for responsiveness */
+/* Desktop #8 */
+@media (max-width:2560px) and (max-height: 1440px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    right: 1%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:1260px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: 520px;
+    width: 24%;
+  }
+
+  #sidebar_col{
+    width: 25%;
+    height: 38vh;
+  }
+
+  #ProfileSection{
+    width: 400px;
+    height: 38vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 400px;
+    height: 38vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 0px;
+    width:123%;
+    
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 10px;
+    width: 100%;
+  }
+  
+  .chat-height{
+    max-height: 100vh;
+    height: 1150px;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 82vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -760px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  
+  #mic-icon {
+    position: relative;
+    right: 0px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 640px;
+    left: 100px;
+  }
+  
+}
+
+/* Desktop #7 */
+@media (max-width:1920px) and (max-height: 1200px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 0%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:1000px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: 200px;
+    width: 24%;
+  }
+
+  #sidebar_col{
+    width: 32%;
+    height: 52vh;
+  }
+
+  #ProfileSection{
+    width: 400px;
+    height: 52vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 400px;
+    height: 52vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 0px;
+    width:123%;
+    
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 10px;
+    width: 100%;
+  }
+  
+  .chat-height{
+    max-height: 100vh;
+    height: 920px;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 79vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -560px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  
+  #mic-icon {
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 640px;
+    left: 100px;
+  }
+  
+}
+
+/* Desktop #6 */
+@media (max-width:1920px) and (max-height: 1080px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 0%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:870px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: 130px;
+    width: 24%;
+  }
+
+  #sidebar_col{
+    width: 32%;
+    height: 52vh;
+  }
+
+  #ProfileSection{
+    width: 400px;
+    height: 52vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 400px;
+    height: 52vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 0px;
+    width:123%;
+    
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 10px;
+    width: 100%;
+  }
+  
+  .chat-height{
+    max-height: 100vh;
+    height: 770px;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 76vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -560px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  
+  #mic-icon {
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 640px;
+    left: 100px;
+  }
+  
+}
+
+
+/* Desktop #5 */
+@media (max-width:1680px) and (max-height: 1050px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    top: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 0.2%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:870px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: 130px;
+    width: 24%;
+  }
+
+  #sidebar_col{
+    width: 35%;
+    height: 52vh;
+  }
+
+  #ProfileSection{
+    width: 400px;
+    height: 52vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 400px;
+    height: 52vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 0px;
+    width:123%;
+    
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 10px;
+    width: 100%;
+  }
+  
+  .chat-height{
+    max-height: 100vh;
+    height: 770px;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 76vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -420px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  
+  #mic-icon {
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 640px;
+    left: 100px;
+  }
+  
+}
+
+/* MacBook Pro 16" */
+@media (max-width:1536px) and (max-height: 960px){
+  #mainContent{
+    position: relative;
+    left: 0.5%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top: 780px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings .modal-card-pos{
+    position: absolute;
+    margin-top: -16px;
+  }
+
+  #sidebar_col{
+    width: 50%;
+    height: 72vh;
+  }
+
+  #ProfileSection{
+    width: 370px;
+    height: 70vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 370px;
+    height: 89vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 10px;
+    width:250px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 19px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 74vh;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -450px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+}
+
+  #mic-icon {
+    position: relative;
+    right: 10px;
+  }
+}
+
 @media (max-width: 1500px) {
   #mainContent{
     position: relative;
@@ -299,6 +1017,165 @@
 }
 }
 
+/* Desktop #4 */
+@media (max-width:1440px) and (max-height: 990px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    top: 10px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    top: 10px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    top: 10px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 1%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:730px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: -10px;
+    width: 24%;
+  }
+
+  #sidebar_col{
+    width: 45%;
+    height: 60vh;
+  }
+
+  #ProfileSection{
+    width: 400px;
+    height: 60vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 400px;
+    height: 89vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 26px;
+    width:123%;
+    
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 20px;
+    width: 100%;
+  }
+  
+  .chat-height{
+    max-height: 100vh;
+    height: 620px;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 72vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -420px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  
+  #mic-icon {
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 470px;
+    left: 100px;
+  }
+  
+}
+
+/* MacBook 11" */
 @media (max-width:1366px) and (max-height: 768px){
   #mainContent{
     position: relative;
@@ -341,11 +1218,16 @@
   }
 
   #sidebar_col{
-    width: 50%;
+    width:45%;
     height: 72vh;
   }
 
   #ProfileSection{
+    width: 370px;
+    height: 72vh;
+  }
+
+  #AccountSection, #HelpSection{
     width: 370px;
     height: 72vh;
   }
@@ -364,16 +1246,515 @@
   #chatsCol3 .message-section{
     height: 68vh;
   }
+
+  .chat-height{
+    max-height: 100vh;
+    height: 500px;
+  }
 }
 
-@media (max-width: 1300px) {
+/* Desktop #3 */
+@media (max-width:1280px) and (max-height: 800px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    bottom: 40px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    bottom: 90px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    bottom: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 1%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:630px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: -130px;
+    width: 24%;
+  }
+
+  #sidebar_col{
+    width: 50%;
+    height: 69vh;
+  }
+
+  #ProfileSection{
+    width: 400px;
+    height: 69vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 400px;
+    height: 89vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 26px;
+    width:110%;
+    
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    top: 10px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 30px;
+    width: 100%;
+  }
+  
+  .chat-height{
+    max-height: 100vh;
+    height: 520px;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 68vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -380px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  
+  #mic-icon {
+    position: relative;
+    right: 30px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 500px;
+    left: 80px;
+  }
+  
+}
+
+/* Desktop #2 */
+@media (max-width:1024px) and (max-height: 768px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    bottom: 40px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    bottom: 90px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    bottom: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 2%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:600px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: -160px;
+    width: 30%;
+  }
+
+  #sidebar_col{
+    width: 50%;
+    height: 72vh;
+  }
+
+  #ProfileSection{
+    width: 370px;
+    height: 72vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 370px;
+    height: 72vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 26px;
+    width:98%;
+    
+  }
+
+  #userCards{
+    position: relative;
+    right: 28px;
+    width:88%;
+    
+  }
+
+  #userDetails{
+    position: relative;
+    right: 20px;
+    top: 10px; 
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    bottom: 30px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 37px;
+    width: 85%;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 67vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -290px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  #mic-icon {
+    position: relative;
+    right: 30px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 470px;
+    left: 50px;
+  }
+
+}
+
+/* Desktop #1 */
+@media (max-width:1024px) and (max-height: 600px){
+  /* sign in form */
+  #signinForm{
+    position: relative;
+    bottom: 40px;
+    width: 100%;
+  }
+
+  #signinForm .card-content{
+    width: 100%;
+  }
+
+  /* sign up form */
+  #signupForm{
+    position: relative;
+    bottom: 90px;
+    width: 100%;
+  }
+
+  #signupForm .card-content{
+    width: 100%;
+  }
+
+  /* reset pwd form */
+  #reset-password{
+    position: relative;
+    bottom: 70px;
+    width: 100%;
+  }
+
+  #reset-password .card-content{
+    width: 100%;
+  }
+
+  #mainContent{
+    position: relative;
+    left: 2%;
+  }
+  
+ #chatsCol2{
+    width: 20px;
+  }
+
+  #sideNavBar .card{
+    max-width: 200px;
+    width: 60px;
+  }
+
+  #profileNav{
+    position: absolute;
+    top:430px;
+  }
+
+  #closeButton{
+    position: absolute;
+    top: 470px;
+    right: 100px;
+  }
+
+  .col-item{
+    width: 50px;
+    position: relative;
+    right: 20px;
+  }
+
+  #callCol2 .card-height{
+    height: 70px;
+  }
+
+  #settings.modal-card-pos{
+    position: absolute;
+    margin-top: -306px;
+    width: 30%;
+  }
+
+  .chat-height{
+    max-height: 100vh;
+    height: 330px;
+  }
+
+  #sidebar_col{
+    width: 50%;
+    height: 89vh;
+  }
+
+  #ProfileSection{
+    width: 370px;
+    height: 89vh;
+  }
+
+  #AccountSection, #HelpSection{
+    width: 370px;
+    height: 89vh;
+  }
+
+  #userCards{
+    position: relative;
+    right: 26px;
+    width:98%;
+    
+  }
+
+  #userCards{
+    position: relative;
+    right: 28px;
+    width:88%;
+    
+  }
+
+  #userDetails{
+    position: relative;
+    right: 20px;
+    top: 10px; 
+  }
+
+  #userCards .avatar-size{
+    position: absolute;
+    left: 0px;
+    bottom: 30px;
+  }
+
+  #chatsCol1 .chat-card{
+    position: relative;
+    right: 37px;
+    width: 85%;
+  }
+
+  /* #Styling for vide call button */
+  #videoCallBtn{
+    position: absolute;
+    right: 120px;
+  }
+
+  #chatsCol3 .message-section{
+    height: 60vh;
+    width: 100%;
+  }
+
+  #replyInput {
+    position: relative;
+    left: -290px; /* Center the input */
+    width: 2vw; /* Use viewport width for responsiveness */
+    top: 2px; /* Adjust as needed */
+  }
+
+  #mic-icon {
+    position: relative;
+    right: 30px;
+  }
+
+  #newCalls{
+    position: absolute;
+    width: 100%;
+    right: 140px;
+  }
+
+  #newCall{
+    position: relative;
+    right: 20px;
+  }
+
+  #newCalls #closeButton{
+    position: absolute;
+    top: 370px;
+    left: 50px;
+  }
+
+}
+
+
+@media (max-width: 1000px) {
   #chatsCol3,  #chatsCol2,  #chatsCol1, #sideNavBar,
    #chatsCol1, #chatsCol2, #callCol1, #callCol2, #statusCol1, #statusCol2,
    .logo-size, header, #mainContent, #signupForm, #signinForm{
   }
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1000px) {
   body{
     background-image: url('../src/assets/not_supported_device.png');
     overflow-x: hidden; 
