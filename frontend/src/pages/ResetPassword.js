@@ -77,7 +77,7 @@ function ResetPassword(){
     }
 
     return(
-        <div>
+        <div id='reset-password'>
             {showPopUp && <PopUp content={popUpContent} color={'black'} backgroundColor={popUpColor} position={popUpPosition}/>}
             <FormCard backgroundColor={'transparent'} border={'2px solid black'} contentWidth={'20%'}
                     innerCard={{
