@@ -15,7 +15,7 @@ const ScrollableChats = ({ messages }) => {
             loader={<h4>Loading more messages...</h4>}
             scrollableTarget="scrollableDiv"
         >
-            <div id="scrollableDiv" style={{ height: '650px', overflow: 'auto' }}>
+            <div id="scrollableDiv" className="chat-height" style={{ overflow: 'auto' }}>
                 {messages.length === 0 ? (
                     <p>No messages to display</p>
                 ) : (
